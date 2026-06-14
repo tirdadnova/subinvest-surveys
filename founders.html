@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Subinvest — Founder Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0D1B14;
+  --surface:#132218;
+  --card:#1A2E22;
+  --border:#2A4035;
+  --text:#F0EDE6;
+  --muted:#8A9E94;
+  --accent:#3DDC84;
+  --accent-dim:#1B4D3E;
+  --gold:#E8A94A;
+  --gold-dim:#4A3010;
+  --danger:#E05555;
+  --r:12px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6}
+
+/* LANG BAR */
+.lang-bar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:rgba(13,27,20,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+.brand{font-family:'DM Serif Display',serif;font-size:16px;color:var(--accent);letter-spacing:-.2px}
+.lang-btns{display:flex;gap:6px}
+.lb{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.lb.on{background:var(--accent);color:#0D1B14;border-color:var(--accent);font-weight:600}
+
+/* PROGRESS */
+.prog{position:fixed;top:41px;left:0;right:0;z-index:199;height:3px;background:var(--border)}
+.prog-fill{height:100%;background:var(--accent);transition:width .5s cubic-bezier(.4,0,.2,1);width:0%}
+
+/* SLIDES CONTAINER */
+.slides{position:fixed;top:44px;left:0;right:0;bottom:56px;overflow:hidden}
+.slide{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px 20px;
+  opacity:0;pointer-events:none;
+  transform:translateY(40px);
+  transition:all .45s cubic-bezier(.4,0,.2,1);
+}
+.slide.active{opacity:1;pointer-events:all;transform:translateY(0)}
+.slide.exit-up{opacity:0;transform:translateY(-40px)}
+
+/* SLIDE INNER */
+.slide-inner{width:100%;max-width:640px}
+.q-num{font-size:12px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.q-num::after{content:'→';opacity:.5}
+.q-title{font-family:'DM Serif Display',serif;font-size:clamp(22px,4vw,32px);line-height:1.2;margin-bottom:8px;color:var(--text)}
+.q-sub{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.7}
+.q-note{display:inline-block;font-size:12px;color:var(--gold);background:var(--gold-dim);padding:5px 12px;border-radius:6px;margin-bottom:18px}
+
+/* OPTIONS */
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 16px;border:1px solid var(--border);border-radius:10px;
+  cursor:pointer;transition:all .15s;background:var(--card);
+  color:var(--text);font-size:14px;
+}
+.opt:hover{border-color:var(--accent);background:var(--accent-dim)}
+.opt.sel{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.opt-key{
+  width:24px;height:24px;border-radius:6px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;color:var(--muted);flex-shrink:0;
+  transition:all .15s;background:var(--bg);
+}
+.opt.sel .opt-key{background:var(--accent);color:#0D1B14;border-color:var(--accent)}
+.opt-text{flex:1;line-height:1.4}
+.opt-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.opt.sel .opt-desc{color:rgba(61,220,132,.7)}
+
+/* MULTI hint */
+.multi-hint{font-size:11px;color:var(--muted);margin-bottom:10px;letter-spacing:.3px}
+
+/* TEXT INPUT */
+.tf-input{
+  width:100%;background:transparent;border:none;border-bottom:2px solid var(--border);
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:20px;
+  padding:10px 0;outline:none;transition:border .2s;
+}
+.tf-input:focus{border-bottom-color:var(--accent)}
+.tf-input::placeholder{color:var(--muted)}
+textarea.tf-input{resize:none;min-height:100px;border:1px solid var(--border);border-radius:var(--r);padding:14px;font-size:15px;background:var(--card)}
+textarea.tf-input:focus{border-color:var(--accent)}
+
+/* SCALE */
+.scale-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.scale-btn{
+  flex:1;min-width:40px;padding:12px 6px;border:1px solid var(--border);border-radius:8px;
+  text-align:center;font-size:14px;cursor:pointer;background:var(--card);color:var(--text);
+  transition:all .15s;font-family:'DM Sans',sans-serif;
+}
+.scale-btn:hover{border-color:var(--accent)}
+.scale-btn.sel{background:var(--accent);color:#0D1B14;border-color:var(--accent);font-weight:600}
+.scale-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px}
+
+/* OK BUTTON */
+.ok-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:20px;padding:12px 24px;
+  background:var(--accent);color:#0D1B14;
+  border:none;border-radius:8px;font-family:'DM Sans',sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;
+}
+.ok-btn:hover{background:#5EEEA0}
+.ok-btn:disabled{opacity:.3;cursor:not-allowed}
+.ok-hint{font-size:11px;color:var(--muted);margin-top:8px}
+
+/* WELCOME SLIDE */
+.welcome-slide{text-align:center}
+.welcome-slide .q-title{font-size:clamp(28px,5vw,42px);margin-bottom:16px}
+.welcome-slide .q-sub{max-width:500px;margin:0 auto 32px}
+.stats{display:flex;justify-content:center;gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;max-width:400px;margin:0 auto 32px}
+.stat{flex:1;padding:16px;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-v{font-family:'DM Serif Display',serif;font-size:22px;color:var(--accent)}
+.stat-l{font-size:11px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
+.start-btn{padding:14px 40px;background:var(--accent);color:#0D1B14;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+.start-btn:hover{background:#5EEEA0}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 20px;background:rgba(13,27,20,.95);backdrop-filter:blur(8px);
+  border-top:1px solid var(--border);
+}
+.nav-btns{display:flex;gap:8px}
+.nav-btn{
+  width:36px;height:36px;border-radius:8px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.nav-counter{font-size:12px;color:var(--muted)}
+
+/* THANK YOU */
+.ty{text-align:center}
+.ty-icon{font-size:56px;margin-bottom:16px}
+.ty-title{font-family:'DM Serif Display',serif;font-size:32px;color:var(--accent);margin-bottom:10px}
+.ty-sub{font-size:15px;color:var(--muted);max-width:440px;margin:0 auto 28px;line-height:1.8}
+.share-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.share-btn{padding:10px 20px;border-radius:8px;font-size:13px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.share-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Required error */
+.req-err{font-size:12px;color:var(--danger);margin-top:8px;display:none}
+.show-err .req-err{display:block}
+
+/* Lang visibility */
+.lang-fr .en{display:none!important}
+.lang-en .fr{display:none!important}
+body.lang-fr{--curr:fr}
+body.lang-en{--curr:en}
+
+@media(max-width:500px){
+  .slide-inner{padding:0 4px}
+  .q-title{font-size:22px}
+}
+</style>
+</head>
+<body class="lang-en">
+
+<div class="lang-bar">
+  <div class="brand">Subinvest</div>
+  <div class="lang-btns">
+    <button class="lb" onclick="setLang('fr')">🇫🇷 FR</button>
+    <button class="lb on" onclick="setLang('en')">🇬🇧 EN</button>
+  </div>
+</div>
+<div class="prog"><div class="prog-fill" id="pf"></div></div>
+
+<div class="slides" id="slides"></div>
+
+<div class="bottom-nav" id="bottomNav" style="display:none">
+  <div class="nav-counter" id="navCounter"></div>
+  <div class="nav-btns">
+    <button class="nav-btn" id="btnUp" onclick="prevQ()" title="Previous">↑</button>
+    <button class="nav-btn" id="btnDown" onclick="nextQ()" title="Next">↓</button>
+  </div>
+</div>
+
+<script>
+let lang = 'en';
+let current = 0;
+let answers = {};
+let started = false;
+
+function t(fr, en){ return lang === 'fr' ? fr : en; }
+
+const questions = [
+  // 0 = welcome
+  { id:'welcome', type:'welcome' },
+
+  // SECTION 1 — PROFILE
+  { id:'q_stage', type:'radio', section: t('Profile','Profile'),
+    title: t('Où en est votre projet ?', 'What stage is your project at?'),
+    opts:[
+      {v:'idea', l: t('Idée','Idea')},
+      {v:'mvp', l:'MVP'},
+      {v:'early_rev', l: t('Premiers revenus','Early revenue')},
+      {v:'active', l: t('Société active','Active company')},
+    ]
+  },
+  { id:'q_country', type:'text',
+    title: t('Dans quel pays êtes-vous basé(e) ?', 'What country are you based in?'),
+    placeholder: t('ex. France, Paris','e.g. France, Paris')
+  },
+  { id:'q_diaspora', type:'radio',
+    title: t('Êtes-vous issu(e) d\'une communauté diaspora ou minoritaire ?', 'Do you come from a diaspora or minority community?'),
+    sub: t('Cela inclut toute communauté ethnique, culturelle, religieuse ou identitaire — diaspora iranienne, maghrébine, africaine, asiatique, juive, musulmane, LGBT+, etc.','This includes any ethnic, cultural, religious or identity community — Iranian, North African, African, Asian, Jewish, Muslim, LGBT+, and any other minority group.'),
+    opts:[
+      {v:'yes', l: t('Oui','Yes')},
+      {v:'no', l: t('Non','No')},
+      {v:'prefer_not', l: t('Je préfère ne pas répondre','Prefer not to say')},
+    ]
+  },
+  { id:'q_diaspora_which', type:'text', conditional: {id:'q_diaspora', val:'yes'},
+    title: t('Quelle communauté ?', 'Which community?'),
+    sub: t('Optionnel — cela nous aide à comprendre la diversité des fondateurs sur la plateforme.','Optional — helps us understand founder diversity on the platform.'),
+    placeholder: t('ex. Iranienne, Algérienne, Chinoise, LGBT+…','e.g. Iranian, Algerian, Chinese, LGBT+…'),
+    optional: true
+  },
+
+  // SECTION 2 — FUNDING PROBLEM
+  { id:'q_tried_funding', type:'radio',
+    title: t('Avez-vous déjà cherché à lever des fonds ?', 'Have you already tried to raise funding?'),
+    opts:[
+      {v:'yes', l: t('Oui','Yes')},
+      {v:'no', l: t('Non, pas encore','No, not yet')},
+    ]
+  },
+  { id:'q_obstacle', type:'radio',
+    title: t('Quel est votre principal obstacle pour lever des fonds ?', 'What is your biggest obstacle to raising funds?'),
+    opts:[
+      {v:'no_network', l: t('Pas de réseau d\'investisseurs','No investor network')},
+      {v:'no_capital', l: t('Pas de capital initial','No initial capital')},
+      {v:'no_banking', l: t('Pas d\'historique bancaire','No banking history')},
+      {v:'complexity', l: t('Processus trop complexe','Process too complex')},
+      {v:'no_investor', l: t('Impossible de trouver un investisseur','Can\'t find an investor')},
+    ]
+  },
+  { id:'q_grant_blocked', type:'radio',
+    title: t('⚡ Avez-vous déjà eu une subvention ou aide accordée que vous n\'avez pas pu débloquer faute de capital ?', '⚡ Have you ever had a grant or subsidy approved that you couldn\'t unlock due to lack of capital?'),
+    sub: t('Ex : French Tech, BPI, aide régionale — accordée mais conditionnée à une levée de fonds.','E.g. French Tech, BPI, regional aid — approved but conditional on raising capital first.'),
+    note: t('💡 C\'est exactement le problème que Subinvest résout.','💡 This is exactly the problem Subinvest solves.'),
+    opts:[
+      {v:'yes_blocked', l: t('Oui, et je n\'ai pas pu débloquer','Yes, and I couldn\'t unlock it')},
+      {v:'yes_solved', l: t('Oui, mais j\'ai trouvé une solution','Yes, but I found a solution')},
+      {v:'no_aware', l: t('Non, mais je savais que c\'était possible','No, but I knew this could happen')},
+      {v:'no_unaware', l: t('Non, je ne savais pas','No, I didn\'t know')},
+    ]
+  },
+  { id:'q_grant_amount', type:'radio', conditional:{id:'q_grant_blocked', val:['yes_blocked','yes_solved']},
+    title: t('Quel montant n\'avez-vous pas pu débloquer ?', 'What grant amount couldn\'t you unlock?'),
+    opts:[
+      {v:'lt10k', l:'< €10,000'},
+      {v:'10_50k', l:'€10,000 – €50,000'},
+      {v:'50_200k', l:'€50,000 – €200,000'},
+      {v:'gt200k', l:'> €200,000'},
+    ]
+  },
+
+  // SECTION 3 — PROPOSED MODEL
+  { id:'q_model_value', type:'scale',
+    title: t('Si vous pouviez lever du capital via des abonnements mensuels de votre communauté, quelle valeur cela aurait-il pour vous ?', 'If you could raise capital through monthly subscriptions from your community, how valuable would that be?'),
+    sub: t('Subinvest transforme ces abonnements en injection de capital unique pour débloquer vos subventions.','Subinvest transforms these subscriptions into a one-shot equity injection to unlock your grants.'),
+    min: t('Peu utile','Not useful'),
+    max: t('Essentiel pour moi','Essential for me')
+  },
+  { id:'q_capital_type', type:'multi',
+    title: t('Quel type de financement préférez-vous ?', 'What type of financing do you prefer?'),
+    sub: t('Plusieurs choix possibles.','Multiple choice.'),
+    opts:[
+      {v:'equity', l:'Equity'},
+      {v:'rev_share', l:'Revenue Sharing'},
+      {v:'convertible', l:'Convertible Note / BSA Air'},
+      {v:'donation', l: t('Don / Donation','Donation')},
+      {v:'no_pref', l: t('Peu importe','No preference')},
+    ]
+  },
+  { id:'q_success_fee', type:'radio',
+    title: t('En cas de succès, seriez-vous prêt(e) à payer un success fee à la plateforme ?', 'If successful, would you be willing to pay a success fee to the platform?'),
+    opts:[
+      {v:'yes', l: t('Oui','Yes')},
+      {v:'no', l: t('Non','No')},
+      {v:'depends', l: t('Ça dépend du montant','Depends on the amount')},
+    ]
+  },
+
+  // SECTION 4 — NEEDS & TRUST
+  { id:'q_services', type:'multi',
+    title: t('Quels services attendez-vous le plus de Subinvest ?', 'What services do you most expect from Subinvest?'),
+    sub: t('Plusieurs choix possibles.','Multiple choice.'),
+    opts:[
+      {v:'due_diligence', l:'Due diligence & validation'},
+      {v:'financial_reports', l: t('Rapports financiers automatiques','Automated financial reports')},
+      {v:'investor_intro', l: t('Mise en relation avec investisseurs','Investor introductions')},
+      {v:'legal', l: t('Support juridique','Legal support')},
+      {v:'community', l: t('Accès à une communauté de fondateurs','Founder community access')},
+      {v:'grant_support', l: t('Aide au dossier de subvention','Grant application support')},
+    ]
+  },
+  { id:'q_trust', type:'text',
+    title: t('Qu\'est-ce qui vous ferait faire confiance à une telle plateforme ?', 'What would make you trust such a platform?'),
+    placeholder: t('ex. Label officiel, partenariat BPI, témoignages, transparence des frais…','e.g. Official label, BPI partnership, testimonials, fee transparency…'),
+    textarea: true
+  },
+  { id:'q_would_publish', type:'radio',
+    title: t('Si Subinvest existait aujourd\'hui, publieriez-vous votre projet dessus ?', 'If Subinvest existed today, would you publish your project on it?'),
+    opts:[
+      {v:'yes', l: t('Oui, tout de suite','Yes, right now')},
+      {v:'probably', l: t('Probablement','Probably')},
+      {v:'no', l: t('Non','No')},
+    ]
+  },
+
+  // GOLDEN QUESTION
+  { id:'q_golden', type:'text',
+    title: t('🏆 Si Subinvest n\'existait pas, comment résoudriez-vous ce problème aujourd\'hui ?', '🏆 If Subinvest didn\'t exist, how would you solve this problem today?'),
+    sub: t('C\'est la question la plus importante du formulaire — votre réponse nous aide à comprendre la réalité du marché.','This is the most important question — your answer helps us understand the real market.'),
+    placeholder: t('ex. Je cherche un business angel, je fais du crowdfunding, je renonce à la subvention…','e.g. I look for a business angel, I do crowdfunding, I give up on the grant…'),
+    textarea: true
+  },
+
+  // CONTACT
+  { id:'q_contact', type:'contact',
+    title: t('Pour recevoir les résultats de l\'étude 👋', 'To receive the study results 👋'),
+    sub: t('Vos réponses restent confidentielles. Nous partageons uniquement des données agrégées.','Your answers stay confidential. We only share aggregated data.')
+  },
+
+  // end
+  { id:'thankyou', type:'thankyou' }
+];
+
+// ── RENDER ──────────────────────────────────────────
+function renderAll(){
+  const container = document.getElementById('slides');
+  container.innerHTML = '';
+  questions.forEach((q,i) => {
+    const div = document.createElement('div');
+    div.className = 'slide' + (i===0?' active':'');
+    div.id = 'slide_'+i;
+    div.innerHTML = renderSlide(q, i);
+    container.appendChild(div);
+  });
+  bindEvents();
+  updateNav();
+}
+
+function renderSlide(q, i){
+  if(q.type==='welcome') return renderWelcome();
+  if(q.type==='thankyou') return renderThankyou();
+  if(q.type==='contact') return renderContact(q,i);
+
+  const visibleIdx = getVisibleIndex(i);
+  const totalVisible = getTotalVisible();
+
+  let html = `<div class="slide-inner">
+    <div class="q-num">${visibleIdx} / ${totalVisible}</div>
+    <div class="q-title">${q.title}</div>`;
+  if(q.sub) html += `<div class="q-sub">${q.sub}</div>`;
+  if(q.note) html += `<div class="q-note">${q.note}</div>`;
+
+  if(q.type==='radio'){
+    html += `<div class="opts">`;
+    const keys = ['A','B','C','D','E','F','G','H'];
+    q.opts.forEach((o,idx) => {
+      html += `<div class="opt" data-qid="${q.id}" data-val="${o.v}" onclick="pickOpt('${q.id}','${o.v}',${i})">
+        <div class="opt-key">${keys[idx]}</div>
+        <div class="opt-text">${o.l}${o.desc?`<div class="opt-desc">${o.desc}</div>`:''}</div>
+      </div>`;
+    });
+    html += `</div>`;
+    html += `<div class="req-err">Please select an option / Veuillez sélectionner.</div>`;
+  }
+  else if(q.type==='multi'){
+    html += `<div class="multi-hint">${t('Plusieurs choix possibles — cliquez pour sélectionner','Multiple choice — click to select')}</div>`;
+    html += `<div class="opts">`;
+    const keys = ['A','B','C','D','E','F','G','H'];
+    q.opts.forEach((o,idx) => {
+      html += `<div class="opt" data-qid="${q.id}" data-val="${o.v}" onclick="pickMulti('${q.id}','${o.v}',this)">
+        <div class="opt-key">${keys[idx]}</div>
+        <div class="opt-text">${o.l}</div>
+      </div>`;
+    });
+    html += `</div>`;
+    html += `<button class="ok-btn" onclick="nextQ()">OK ↵</button>`;
+  }
+  else if(q.type==='text'){
+    if(q.textarea){
+      html += `<textarea class="tf-input" id="inp_${q.id}" placeholder="${q.placeholder||''}" rows="4" oninput="answers['${q.id}']=this.value"></textarea>`;
+    } else {
+      html += `<input class="tf-input" type="text" id="inp_${q.id}" placeholder="${q.placeholder||''}" oninput="answers['${q.id}']=this.value" onkeydown="if(event.key==='Enter')nextQ()"/>`;
+    }
+    html += `<button class="ok-btn" onclick="nextQ()">OK ↵</button>`;
+    if(!q.optional) html += `<div class="req-err">Please fill this in / Veuillez remplir.</div>`;
+    else html += `<div class="ok-hint">${t('Optionnel — appuyez sur OK pour passer','Optional — press OK to skip')}</div>`;
+  }
+  else if(q.type==='scale'){
+    html += `<div class="scale-row" id="scale_${q.id}">`;
+    for(let n=1;n<=10;n++) html += `<div class="scale-btn" onclick="pickScale('${q.id}',${n},${i})">${n}</div>`;
+    html += `</div><div class="scale-ends"><span>${q.min}</span><span>${q.max}</span></div>`;
+    html += `<div class="req-err">Please select a value / Veuillez sélectionner.</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+function renderWelcome(){
+  return `<div class="slide-inner welcome-slide">
+    <div class="q-num" style="justify-content:center">Subinvest.org · Founder Survey</div>
+    <div class="q-title">${t('Vous avez une subvention. Pouvez-vous la débloquer ?','You have a grant. Can you unlock it?')}</div>
+    <div class="q-sub">${t('La France est #1 en Europe pour les aides aux startups — mais la plupart nécessitent une levée de fonds préalable. Cette enquête prend ~10 min.','France is #1 in Europe for startup grants — but most require raising capital first. This survey takes ~10 min.')}</div>
+    <div class="stats">
+      <div class="stat"><div class="stat-v">#1</div><div class="stat-l">${t('France en UE','France in EU')}</div></div>
+      <div class="stat"><div class="stat-v">~30%</div><div class="stat-l">${t('Bloqués','Blocked grants')}</div></div>
+      <div class="stat"><div class="stat-v">€2B+</div><div class="stat-l">BPI/an</div></div>
+    </div>
+    <button class="start-btn" onclick="startSurvey()">${t('Commencer →','Start →')}</button>
+    <div class="ok-hint" style="margin-top:12px;text-align:center">🔒 ${t('Données confidentielles · Résultats partagés','Confidential · Results shared back')}</div>
+  </div>`;
+}
+
+function renderThankyou(){
+  return `<div class="slide-inner ty">
+    <div class="ty-icon">✅</div>
+    <div class="ty-title">${t('Merci !','Thank you!')}</div>
+    <p class="ty-sub">${t('Vos réponses contribuent directement à la construction de Subinvest. Nous partagerons les résultats avec tous les participants.','Your answers directly shape Subinvest. We\'ll share results with all participants.')}</p>
+    <div class="share-row">
+      <button class="share-btn" onclick="shareLinkedIn()">🔗 LinkedIn</button>
+      <button class="share-btn" onclick="shareWhatsApp()">💬 WhatsApp</button>
+    </div>
+  </div>`;
+}
+
+function renderContact(q,i){
+  const visibleIdx = getVisibleIndex(i);
+  const totalVisible = getTotalVisible();
+  return `<div class="slide-inner">
+    <div class="q-num">${visibleIdx} / ${totalVisible}</div>
+    <div class="q-title">${q.title}</div>
+    <div class="q-sub">${q.sub}</div>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:8px">
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:5px">${t('Prénom & Nom *','Full name *')}</div>
+        <input class="tf-input" type="text" id="c_name" placeholder="${t('Marie Dupont','Marie Dupont')}" style="font-size:16px" oninput="answers.c_name=this.value"/>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:5px">${t('Email *','Email *')}</div>
+        <input class="tf-input" type="email" id="c_email" placeholder="marie@startup.fr" style="font-size:16px" oninput="answers.c_email=this.value"/>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:5px">${t('Nom de votre startup','Startup name')}</div>
+        <input class="tf-input" type="text" id="c_startup" placeholder="${t('Startup SAS','Startup SAS')}" style="font-size:16px" oninput="answers.c_startup=this.value"/>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:5px">LinkedIn</div>
+        <input class="tf-input" type="text" id="c_linkedin" placeholder="linkedin.com/in/..." style="font-size:16px" oninput="answers.c_linkedin=this.value"/>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:5px">${t('Disponible pour un entretien 20 min ?','Available for a 20-min interview?')}</div>
+        <div class="opts" style="flex-direction:row;flex-wrap:wrap">
+          ${['yes_2w','yes_month','maybe','no'].map((v,idx)=>{
+            const labels = {
+              yes_2w: t('Dans 2 semaines','Within 2 weeks'),
+              yes_month: t('Ce mois-ci','This month'),
+              maybe: t('Peut-être','Maybe'),
+              no: 'Non / No'
+            };
+            return `<div class="opt" style="flex:1;min-width:120px" onclick="pickOpt('c_interview','${v}',-1);this.parentNode.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));this.classList.add('sel');answers.c_interview='${v}'">
+              <div class="opt-key">${['A','B','C','D'][idx]}</div>
+              <div class="opt-text" style="font-size:13px">${labels[v]}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+    <button class="ok-btn" onclick="submitSurvey()" id="submitBtn">${t('Envoyer mes réponses →','Submit my answers →')}</button>
+    <div class="req-err" id="contact-err">${t('Veuillez renseigner votre nom et email.','Please fill in your name and email.')}</div>
+  </div>`;
+}
+
+// ── NAVIGATION ────────────────────────────────────
+function getVisibleQuestions(){
+  return questions.map((q,i)=>({q,i})).filter(({q,i})=>{
+    if(q.type==='welcome'||q.type==='thankyou') return false;
+    if(q.conditional){
+      const dep = answers[q.conditional.id];
+      const vals = Array.isArray(q.conditional.val)?q.conditional.val:[q.conditional.val];
+      return vals.includes(dep);
+    }
+    return true;
+  });
+}
+function getVisibleIndex(slideIdx){
+  const vis = getVisibleQuestions();
+  const idx = vis.findIndex(x=>x.i===slideIdx);
+  return idx>=0 ? idx+1 : '—';
+}
+function getTotalVisible(){ return getVisibleQuestions().length; }
+
+function startSurvey(){
+  started = true;
+  document.getElementById('bottomNav').style.display='flex';
+  goTo(1);
+}
+
+function goTo(idx){
+  const slides = document.querySelectorAll('.slide');
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit-up');
+  setTimeout(()=>slides[current].classList.remove('exit-up'),450);
+  current = idx;
+  slides[current].classList.add('active');
+  updateNav();
+  updateProg();
+  // focus first input
+  setTimeout(()=>{
+    const inp = slides[current].querySelector('input,textarea');
+    if(inp) inp.focus();
+  },500);
+}
+
+function nextQ(){
+  const q = questions[current];
+  // validate
+  if(q.type==='radio'){
+    if(!answers[q.id]&&!q.optional){
+      document.querySelector('#slide_'+current+' .req-err').style.display='block';
+      return;
+    }
+  }
+  if(q.type==='scale'){
+    if(!answers[q.id]){
+      document.querySelector('#slide_'+current+' .req-err').style.display='block';
+      return;
+    }
+  }
+  if(q.type==='text'&&!q.optional){
+    const val = document.getElementById('inp_'+q.id)?.value?.trim();
+    if(!val){
+      document.querySelector('#slide_'+current+' .req-err').style.display='block';
+      return;
+    }
+  }
+  // find next visible
+  let next = current+1;
+  while(next < questions.length-1){
+    const nq = questions[next];
+    if(nq.conditional){
+      const dep = answers[nq.conditional.id];
+      const vals = Array.isArray(nq.conditional.val)?nq.conditional.val:[nq.conditional.val];
+      if(!vals.includes(dep)){ next++; continue; }
+    }
+    break;
+  }
+  if(next < questions.length) goTo(next);
+}
+
+function prevQ(){
+  if(current<=1) return;
+  let prev = current-1;
+  while(prev>0){
+    const pq = questions[prev];
+    if(pq.conditional){
+      const dep = answers[pq.conditional.id];
+      const vals = Array.isArray(pq.conditional.val)?pq.conditional.val:[pq.conditional.val];
+      if(!vals.includes(dep)){ prev--; continue; }
+    }
+    break;
+  }
+  if(prev>=0){
+    const slides = document.querySelectorAll('.slide');
+    slides[current].classList.remove('active');
+    current = prev;
+    slides[current].classList.add('active');
+    updateNav();
+    updateProg();
+  }
+}
+
+function updateNav(){
+  document.getElementById('btnUp').disabled = current<=1;
+  document.getElementById('btnDown').disabled = current>=questions.length-1;
+  const vis = getVisibleQuestions();
+  const idx = vis.findIndex(x=>x.i===current);
+  document.getElementById('navCounter').textContent = idx>=0 ? `${idx+1} / ${vis.length}` : '';
+}
+
+function updateProg(){
+  const vis = getVisibleQuestions();
+  const idx = vis.findIndex(x=>x.i===current);
+  const pct = vis.length>0 && idx>=0 ? Math.round(((idx+1)/vis.length)*100) : 0;
+  document.getElementById('pf').style.width = pct+'%';
+}
+
+// ── INTERACTIONS ──────────────────────────────────
+function pickOpt(qid, val, slideIdx){
+  answers[qid] = val;
+  const slide = slideIndex(qid);
+  document.querySelectorAll('#slide_'+slide+' .opt[data-qid="'+qid+'"]').forEach(o=>{
+    o.classList.toggle('sel', o.dataset.val===val);
+  });
+  const err = document.querySelector('#slide_'+slide+' .req-err');
+  if(err) err.style.display='none';
+  // auto-advance after short delay
+  setTimeout(()=>nextQ(), 300);
+}
+
+function pickMulti(qid, val, el){
+  if(!answers[qid]) answers[qid]=[];
+  const idx = answers[qid].indexOf(val);
+  if(idx>=0) answers[qid].splice(idx,1);
+  else answers[qid].push(val);
+  el.classList.toggle('sel', answers[qid].includes(val));
+}
+
+function pickScale(qid, val, slideIdx){
+  answers[qid] = val;
+  const slide = slideIndex(qid);
+  document.querySelectorAll('#scale_'+qid+' .scale-btn').forEach((b,i)=>{
+    b.classList.toggle('sel',i+1===val);
+  });
+  const err = document.querySelector('#slide_'+slide+' .req-err');
+  if(err) err.style.display='none';
+  setTimeout(()=>nextQ(),350);
+}
+
+function slideIndex(qid){
+  return questions.findIndex(q=>q.id===qid);
+}
+
+// keyboard nav
+document.addEventListener('keydown',e=>{
+  if(!started) return;
+  const q = questions[current];
+  if(e.key==='Enter'&&q.type!=='radio'&&q.type!=='scale') nextQ();
+  if(e.key==='ArrowDown') nextQ();
+  if(e.key==='ArrowUp') prevQ();
+  if(q.type==='radio'||q.type==='multi'){
+    const keys = ['a','b','c','d','e','f','g','h'];
+    const idx = keys.indexOf(e.key.toLowerCase());
+    if(idx>=0&&q.opts&&q.opts[idx]){
+      if(q.type==='radio') pickOpt(q.id, q.opts[idx].v, current);
+      else {
+        const el = document.querySelector('#slide_'+current+' .opt[data-val="'+q.opts[idx].v+'"]');
+        if(el) pickMulti(q.id, q.opts[idx].v, el);
+      }
+    }
+  }
+});
+
+// ── SUBMIT ────────────────────────────────────────
+async function submitSurvey(){
+  if(!answers.c_name||!answers.c_email){
+    document.getElementById('contact-err').style.display='block';
+    return;
+  }
+  const btn = document.getElementById('submitBtn');
+  btn.disabled=true; btn.textContent=t('Envoi…','Sending…');
+
+  const payload = {
+    _subject: `[Subinvest Founder] ${answers.c_startup||answers.c_name}`,
+    _replyto: answers.c_email,
+    'Stage': answers.q_stage||'—',
+    'Country': answers.q_country||'—',
+    'Diaspora': answers.q_diaspora||'—',
+    'Diaspora community': answers.q_diaspora_which||'—',
+    'Tried fundraising': answers.q_tried_funding||'—',
+    'Main obstacle': answers.q_obstacle||'—',
+    'Grant blocked by capital': answers.q_grant_blocked||'—',
+    'Grant amount blocked': answers.q_grant_amount||'—',
+    'Model value 1-10': answers.q_model_value||'—',
+    'Preferred capital type': (answers.q_capital_type||[]).join(', ')||'—',
+    'Success fee willing': answers.q_success_fee||'—',
+    'Services expected': (answers.q_services||[]).join(', ')||'—',
+    'Trust factors': answers.q_trust||'—',
+    'Would publish project': answers.q_would_publish||'—',
+    'Alternative without Subinvest': answers.q_golden||'—',
+    'Name': answers.c_name,
+    'Email': answers.c_email,
+    'Startup': answers.c_startup||'—',
+    'LinkedIn': answers.c_linkedin||'—',
+    'Interview availability': answers.c_interview||'—',
+    'Language': lang,
+    'Submitted at': new Date().toLocaleString('en-GB',{timeZone:'Europe/Paris'})
+  };
+
+  try {
+    const res = await fetch('https://formspree.io/f/mjgdodnn', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await res.json();
+    if(res.ok && !data.errors) {
+      goTo(questions.length-1);
+    } else {
+      const msg = data.errors ? data.errors.map(e=>e.message||e.field).join(', ') : 'Submission failed';
+      console.error('Formspree error:', msg, data);
+      btn.disabled=false;
+      btn.textContent='⚠️ ' + msg.substring(0,50);
+    }
+  } catch(err) {
+    console.error('Network error:', err);
+    btn.disabled=false;
+    btn.textContent='⚠️ Network error — retry';
+  }
+}
+
+// ── LANG ──────────────────────────────────────────
+function setLang(l){
+  lang = l;
+  document.body.className = 'lang-'+l;
+  document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',b.textContent.toLowerCase().includes(l)));
+  renderAll();
+  if(started) document.getElementById('bottomNav').style.display='flex';
+}
+
+// ── SHARE ─────────────────────────────────────────
+function shareLinkedIn(){
+  window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(location.href)}`,'_blank');
+}
+function shareWhatsApp(){
+  const txt = encodeURIComponent(`🚀 Subinvest — Founder Survey\n${t('Vous avez une subvention bloquée ? Aidez-nous à cartographier le problème.','Got a blocked grant? Help us map the problem.')}\n${location.href}`);
+  window.open(`https://wa.me/?text=${txt}`,'_blank');
+}
+
+// ── INIT ──────────────────────────────────────────
+renderAll();
+</script>
+</body>
+</html>

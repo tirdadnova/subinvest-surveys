@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Subinvest — Community Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1A0A2E;--surface:#220D3A;--card:#2A1248;--border:#3D1E60;
+  --text:#F0EDE6;--muted:#9A86C0;--accent:#C084FC;--accent-dim:#2D1555;
+  --gold:#E8A94A;--gold-dim:#3A2A0A;--danger:#E05555;--r:12px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6}
+.lang-bar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:rgba(26,10,46,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+.brand{font-family:'DM Serif Display',serif;font-size:16px;color:var(--accent)}
+.lang-btns{display:flex;gap:6px}
+.lb{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
+.lb.on{background:var(--accent);color:#1A0A2E;border-color:var(--accent);font-weight:600}
+.prog{position:fixed;top:41px;left:0;right:0;z-index:199;height:3px;background:var(--border)}
+.prog-fill{height:100%;background:var(--accent);transition:width .5s cubic-bezier(.4,0,.2,1);width:0%}
+.slides{position:fixed;top:44px;left:0;right:0;bottom:56px;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px 20px;opacity:0;pointer-events:none;transform:translateY(40px);transition:all .45s cubic-bezier(.4,0,.2,1)}
+.slide.active{opacity:1;pointer-events:all;transform:translateY(0)}
+.slide.exit-up{opacity:0;transform:translateY(-40px)}
+.slide-inner{width:100%;max-width:620px}
+.q-num{font-size:12px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.q-num::after{content:'→';opacity:.5}
+.q-title{font-family:'DM Serif Display',serif;font-size:clamp(20px,3.8vw,30px);line-height:1.2;margin-bottom:8px}
+.q-sub{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.7}
+.q-note{display:inline-block;font-size:12px;color:var(--gold);background:var(--gold-dim);padding:5px 12px;border-radius:6px;margin-bottom:16px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:var(--card);color:var(--text);font-size:14px}
+.opt:hover{border-color:var(--accent);background:var(--accent-dim)}
+.opt.sel{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.opt-key{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--muted);flex-shrink:0;margin-top:1px;transition:all .15s;background:var(--bg)}
+.opt.sel .opt-key{background:var(--accent);color:#1A0A2E;border-color:var(--accent)}
+.opt-text{flex:1;line-height:1.4}
+.opt-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.multi-hint{font-size:11px;color:var(--muted);margin-bottom:10px}
+.tf-input{width:100%;background:transparent;border:none;border-bottom:2px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:18px;padding:10px 0;outline:none;transition:border .2s}
+.tf-input:focus{border-bottom-color:var(--accent)}
+.tf-input::placeholder{color:var(--muted)}
+textarea.tf-input{resize:none;min-height:80px;border:1px solid var(--border);border-radius:var(--r);padding:14px;font-size:14px;background:var(--card)}
+textarea.tf-input:focus{border-color:var(--accent)}
+.scale-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.scale-btn{flex:1;min-width:36px;padding:11px 4px;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:13px;cursor:pointer;background:var(--card);color:var(--text);transition:all .15s;font-family:'DM Sans',sans-serif}
+.scale-btn:hover{border-color:var(--accent)}
+.scale-btn.sel{background:var(--accent);color:#1A0A2E;border-color:var(--accent);font-weight:600}
+.scale-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px}
+.ok-btn{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:12px 24px;background:var(--accent);color:#1A0A2E;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
+.ok-btn:hover{opacity:.85}
+.ok-btn:disabled{opacity:.3;cursor:not-allowed}
+.ok-hint{font-size:11px;color:var(--muted);margin-top:8px}
+.welcome-slide{text-align:center}
+.welcome-slide .q-title{font-size:clamp(24px,4.5vw,38px);margin-bottom:16px}
+.stats{display:flex;justify-content:center;gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;max-width:380px;margin:0 auto 32px}
+.stat{flex:1;padding:14px;text-align:center;border-right:1px solid var(--border)}
+.stat:last-child{border-right:none}
+.stat-v{font-family:'DM Serif Display',serif;font-size:20px;color:var(--accent)}
+.stat-l{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
+.start-btn{padding:14px 40px;background:var(--accent);color:#1A0A2E;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:rgba(26,10,46,.95);backdrop-filter:blur(8px);border-top:1px solid var(--border)}
+.nav-btns{display:flex;gap:8px}
+.nav-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.nav-counter{font-size:12px;color:var(--muted)}
+.ty{text-align:center}
+.ty-icon{font-size:52px;margin-bottom:16px}
+.ty-title{font-family:'DM Serif Display',serif;font-size:30px;color:var(--accent);margin-bottom:10px}
+.ty-sub{font-size:14px;color:var(--muted);max-width:440px;margin:0 auto 24px;line-height:1.8}
+.share-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.share-btn{padding:10px 20px;border-radius:8px;font-size:13px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.share-btn:hover{border-color:var(--accent);color:var(--accent)}
+.req-err{font-size:12px;color:var(--danger);margin-top:8px;display:none}
+</style>
+</head>
+<body>
+<div class="lang-bar">
+  <div class="brand">Subinvest · Community</div>
+  <div class="lang-btns">
+    <button class="lb" onclick="setLang('fr')">🇫🇷 FR</button>
+    <button class="lb on" onclick="setLang('en')">🇬🇧 EN</button>
+  </div>
+</div>
+<div class="prog"><div class="prog-fill" id="pf"></div></div>
+<div class="slides" id="slides"></div>
+<div class="bottom-nav" id="bottomNav" style="display:none">
+  <div class="nav-counter" id="navCounter"></div>
+  <div class="nav-btns">
+    <button class="nav-btn" id="btnUp" onclick="prevQ()">↑</button>
+    <button class="nav-btn" id="btnDown" onclick="nextQ()">↓</button>
+  </div>
+</div>
+<script>
+let lang='en',current=0,answers={},started=false;
+function t(fr,en){return lang==='fr'?fr:en}
+
+const questions=[
+{id:'welcome',type:'welcome'},
+
+// SECTION 1 — DEMOGRAPHICS (neutral framing)
+{id:'q_age',type:'radio',
+  title:t('Dans quelle tranche d\'âge vous situez-vous ?','Which age group do you belong to?'),
+  opts:[
+    {v:'18_24',l:'18 – 24'},{v:'25_34',l:'25 – 34'},{v:'35_44',l:'35 – 44'},
+    {v:'45_54',l:'45 – 54'},{v:'55_64',l:'55 – 64'},{v:'gt65',l:'65+'},
+  ]
+},
+{id:'q_gender',type:'radio',
+  title:t('Comment vous identifiez-vous ?','How do you identify?'),
+  opts:[
+    {v:'female',l:t('Femme','Woman')},
+    {v:'male',l:t('Homme','Man')},
+    {v:'nonbinary',l:t('Non-binaire / autre','Non-binary / other')},
+    {v:'prefer_not',l:t('Je préfère ne pas répondre','Prefer not to say')},
+  ]
+},
+{id:'q_country',type:'text',
+  title:t('Dans quel pays vivez-vous actuellement ?','What country do you currently live in?'),
+  placeholder:t('ex. France, Paris','e.g. France, Paris')
+},
+{id:'q_origin',type:'radio',
+  title:t('Êtes-vous originaire du pays dans lequel vous vivez ?','Are you originally from the country you live in?'),
+  opts:[
+    {v:'yes',l:t('Oui, j\'y suis né(e)','Yes, I was born here')},
+    {v:'no_long',l:t('Non — j\'y vis depuis plus de 5 ans','No — I\'ve lived here more than 5 years')},
+    {v:'no_recent',l:t('Non — j\'y vis depuis moins de 5 ans','No — I\'ve lived here less than 5 years')},
+    {v:'nomad',l:t('Je vis entre plusieurs pays','I live between multiple countries')},
+  ]
+},
+{id:'q_community',type:'radio',
+  title:t('Vous identifiez-vous à une communauté culturelle, ethnique, religieuse ou identitaire particulière ?','Do you identify with a particular cultural, ethnic, religious or identity community?'),
+  sub:t('Ex : diaspora iranienne, maghrébine, africaine, asiatique, juive, musulmane, LGBT+, etc. Toute communauté est bienvenue.','E.g. Iranian, North African, African, Asian, Jewish, Muslim, LGBT+, etc. Any community welcome.'),
+  opts:[
+    {v:'yes',l:t('Oui','Yes')},
+    {v:'no',l:t('Non — je ne m\'identifie à aucune communauté particulière','No — I don\'t identify with any specific community')},
+    {v:'prefer_not',l:t('Je préfère ne pas répondre','Prefer not to say')},
+  ]
+},
+{id:'q_community_which',type:'text',optional:true,conditional:{id:'q_community',val:'yes'},
+  title:t('Laquelle ?','Which one?'),
+  sub:t('Optionnel. Cela nous aide à comprendre la diversité de notre communauté.','Optional. This helps us understand the diversity of our community.'),
+  placeholder:t('ex. Iranienne, Algérienne, Chinoise, LGBT+, Juive…','e.g. Iranian, Algerian, Chinese, LGBT+, Jewish…')
+},
+{id:'q_job',type:'radio',
+  title:t('Quelle est votre situation professionnelle actuelle ?','What is your current professional situation?'),
+  opts:[
+    {v:'employee',l:t('Salarié(e)','Employee')},
+    {v:'self_employed',l:t('Indépendant(e) / Freelance','Self-employed / Freelance')},
+    {v:'entrepreneur',l:t('Entrepreneur(e) / Fondateur(trice)','Entrepreneur / Founder')},
+    {v:'student',l:t('Étudiant(e)','Student')},
+    {v:'retired',l:t('Retraité(e)','Retired')},
+    {v:'unemployed',l:t('Sans emploi','Unemployed')},
+  ]
+},
+
+// SECTION 2 — INCOME & FINANCIAL BEHAVIOUR (indirect)
+{id:'q_income',type:'radio',
+  title:t('Dans quelle fourchette se situe votre revenu mensuel net ?','What range best describes your monthly net income?'),
+  sub:t('Ces données restent strictement confidentielles et ne seront jamais partagées individuellement.','This data remains strictly confidential and will never be shared individually.'),
+  opts:[
+    {v:'lt1500',l:'< €1,500 / mois'},
+    {v:'1500_3000',l:'€1,500 – €3,000 / mois'},
+    {v:'3000_5000',l:'€3,000 – €5,000 / mois'},
+    {v:'5000_10000',l:'€5,000 – €10,000 / mois'},
+    {v:'gt10000',l:'> €10,000 / mois'},
+    {v:'prefer_not',l:t('Je préfère ne pas répondre','Prefer not to say')},
+  ]
+},
+{id:'q_savings_behaviour',type:'radio',
+  title:t('En général, comment décririez-vous votre rapport à l\'argent ?','In general, how would you describe your relationship with money?'),
+  sub:t('Il n\'y a pas de bonne ou mauvaise réponse — nous cherchons à comprendre les comportements réels.','No right or wrong answer — we want to understand real behaviours.'),
+  opts:[
+    {v:'spender',l:t('Je dépense la plupart de ce que je gagne','I spend most of what I earn')},
+    {v:'saver',l:t('J\'épargne régulièrement','I save regularly')},
+    {v:'investor',l:t('J\'investis activement','I actively invest')},
+    {v:'mixed',l:t('Un mélange selon les périodes','A mix depending on the period')},
+  ]
+},
+
+// SECTION 3 — SUBSCRIPTION HABITS (reveal willingness indirectly)
+{id:'q_subs_count',type:'radio',
+  title:t('Combien d\'abonnements payants avez-vous actuellement (streaming, apps, presse, sport…) ?','How many paid subscriptions do you currently have (streaming, apps, press, sport…)?'),
+  opts:[
+    {v:'0',l:t('Aucun','None')},
+    {v:'1_3',l:'1 – 3'},
+    {v:'4_6',l:'4 – 6'},
+    {v:'7_10',l:'7 – 10'},
+    {v:'gt10',l:'> 10'},
+  ]
+},
+{id:'q_subs_total',type:'radio',
+  title:t('En additionnant tous vos abonnements, combien dépensez-vous environ par mois ?','Adding up all your subscriptions, how much do you spend approximately per month?'),
+  opts:[
+    {v:'0',l:'€0'},
+    {v:'lt20',l:'< €20 / mois'},
+    {v:'20_50',l:'€20 – €50 / mois'},
+    {v:'50_100',l:'€50 – €100 / mois'},
+    {v:'100_200',l:'€100 – €200 / mois'},
+    {v:'gt200',l:'> €200 / mois'},
+  ]
+},
+{id:'q_subs_services',type:'multi',
+  title:t('À quels types de services êtes-vous abonné(e) ?','What types of services do you subscribe to?'),
+  sub:t('Plusieurs choix possibles.','Multiple choice.'),
+  opts:[
+    {v:'video',l:t('Vidéo (Netflix, Disney+, YouTube…)','Video (Netflix, Disney+, YouTube…)')},
+    {v:'music',l:t('Musique (Spotify, Deezer…)','Music (Spotify, Deezer…)')},
+    {v:'news',l:t('Presse / Info (journaux, newsletters)','News / Press (newspapers, newsletters)')},
+    {v:'sport',l:t('Sport / Bien-être','Sport / Wellbeing')},
+    {v:'software',l:t('Logiciels / Apps','Software / Apps')},
+    {v:'food',l:t('Alimentation / livraison','Food / delivery')},
+    {v:'education',l:t('Formation / éducation','Education / learning')},
+    {v:'community',l:t('Communauté / réseau','Community / network')},
+    {v:'none',l:t('Aucun','None')},
+  ]
+},
+{id:'q_sub_cancel_reason',type:'radio',
+  title:t('Quand vous résiliez un abonnement, quelle est généralement la première raison ?','When you cancel a subscription, what is usually the main reason?'),
+  opts:[
+    {v:'price',l:t('Le prix ne correspond plus à la valeur perçue','Price no longer matches perceived value')},
+    {v:'no_use',l:t('Je ne l\'utilise plus assez','I don\'t use it enough anymore')},
+    {v:'better_alt',l:t('J\'ai trouvé une meilleure alternative','Found a better alternative')},
+    {v:'budget',l:t('Contrainte budgétaire','Budget constraints')},
+    {v:'rarely',l:t('Je résilie rarement','I rarely cancel')},
+  ]
+},
+
+// SECTION 4 — INVESTMENT MINDSET (projective, not direct)
+{id:'q_invest_experience',type:'radio',
+  title:t('Avez-vous déjà mis de l\'argent dans quelque chose avec l\'espoir d\'un retour futur ?','Have you ever put money into something with the hope of a future return?'),
+  sub:t('Au sens large : actions, cryptos, immobilier, prêt à un proche, don à une cause, etc.','Broadly: stocks, crypto, real estate, lending to someone, donating to a cause, etc.'),
+  opts:[
+    {v:'never',l:t('Non, jamais','No, never')},
+    {v:'stocks',l:t('Oui — bourse / ETF / actions','Yes — stocks / ETF')},
+    {v:'crypto',l:t('Oui — cryptomonnaies','Yes — cryptocurrencies')},
+    {v:'real_estate',l:t('Oui — immobilier','Yes — real estate')},
+    {v:'startup',l:t('Oui — startup / business','Yes — startup / business')},
+    {v:'multiple',l:t('Oui — plusieurs types','Yes — multiple types')},
+  ]
+},
+{id:'q_risk_appetite',type:'scale',
+  title:t('Sur une échelle de 1 à 10, quel est votre appétit pour le risque financier ?','On a scale of 1 to 10, what is your appetite for financial risk?'),
+  min:t('Très prudent(e)','Very cautious'),
+  max:t('Très à l\'aise avec le risque','Very comfortable with risk')
+},
+{id:'q_max_lose',type:'radio',
+  title:t('Quel montant maximum pourriez-vous mettre dans un projet sans être inquiet(e) de le perdre ?','What maximum amount could you put into a project without being worried about losing it?'),
+  sub:t('Pas une promesse d\'investissement — juste pour comprendre votre zone de confort.','Not an investment commitment — just to understand your comfort zone.'),
+  opts:[
+    {v:'0',l:t('Je ne suis pas à l\'aise avec l\'idée de perdre quoi que ce soit','I\'m not comfortable losing anything')},
+    {v:'lt100',l:'< €100'},
+    {v:'100_500',l:'€100 – €500'},
+    {v:'500_2k',l:'€500 – €2,000'},
+    {v:'2k_10k',l:'€2,000 – €10,000'},
+    {v:'gt10k',l:'> €10,000'},
+  ]
+},
+
+// SECTION 5 — SUBSCRIPTION TO SUPPORT (the key insight)
+{id:'q_support_motivation',type:'radio',
+  title:t('Si vous deviez soutenir financièrement quelque chose chaque mois, qu\'est-ce qui vous motiverait le plus ?','If you were to financially support something monthly, what would motivate you most?'),
+  sub:t('Question ouverte sur vos valeurs — pas de bonne réponse.','Open question about your values — no right answer.'),
+  opts:[
+    {v:'return',l:t('Obtenir un retour financier','Getting a financial return')},
+    {v:'impact',l:t('Avoir un impact concret sur quelqu\'un','Having a concrete impact on someone')},
+    {v:'community',l:t('Appartenir à une communauté qui soutient des projets','Being part of a community that supports projects')},
+    {v:'discovery',l:t('Découvrir des projets innovants en avant-première','Discovering innovative projects early')},
+    {v:'diaspora',l:t('Soutenir quelqu\'un de ma communauté ou diaspora','Supporting someone from my community or diaspora')},
+    {v:'mixed',l:t('Un mélange de tout ça','A mix of all of these')},
+  ]
+},
+{id:'q_max_sub_project',type:'radio',
+  title:t('Quel montant maximum seriez-vous à l\'aise de payer chaque mois pour soutenir un projet qui vous tient à cœur ?','What maximum amount would you be comfortable paying monthly to support a project you care about?'),
+  opts:[
+    {v:'0',l:t('Je ne paierais rien — je préfère faire un don ponctuel','I wouldn\'t pay — I prefer a one-time donation')},
+    {v:'lt5',l:'< €5 / mois'},
+    {v:'5_10',l:'€5 – €10 / mois'},
+    {v:'10_25',l:'€10 – €25 / mois'},
+    {v:'25_50',l:'€25 – €50 / mois'},
+    {v:'gt50',l:'> €50 / mois'},
+  ]
+},
+{id:'q_roi_expectation',type:'radio',
+  title:t('Si votre abonnement mensuel était transformé en part au capital d\'un projet, quel retour minimum attendriez-vous ?','If your monthly subscription were converted into a stake in a project, what minimum return would you expect?'),
+  sub:t('Sans attente = don. Avec attente = investissement. Nous voulons comprendre votre état d\'esprit naturel.','No expectation = donation. With expectation = investment. We want to understand your natural mindset.'),
+  opts:[
+    {v:'none',l:t('Aucun — c\'est un don pour moi','None — it\'s a donation for me')},
+    {v:'capital',l:t('Récupérer au moins mon capital','Recover at least my capital')},
+    {v:'lt10',l:t('Un petit retour (< 10%/an)','A small return (< 10%/year)')},
+    {v:'10_30',l:'10% – 30% / an'},
+    {v:'gt30',l:t('> 30% / an (investisseur actif)','> 30%/year (active investor)')},
+  ]
+},
+
+// SECTION 6 — DIASPORA & COMMUNITY INVESTMENT
+{id:'q_diaspora_invest',type:'radio',
+  title:t('Seriez-vous plus susceptible de soutenir un projet porté par quelqu\'un de votre communauté ou diaspora ?','Would you be more likely to support a project led by someone from your community or diaspora?'),
+  opts:[
+    {v:'much_more',l:t('Oui — c\'est même une priorité pour moi','Yes — it\'s actually a priority for me')},
+    {v:'somewhat',l:t('Légèrement — ça joue un rôle','Slightly — it plays a role')},
+    {v:'neutral',l:t('Non — je juge le projet, pas l\'origine du fondateur','No — I judge the project, not the founder\'s origin')},
+    {v:'less',l:t('Non — j\'évite les investissements communautaires','No — I avoid community-based investments')},
+  ]
+},
+{id:'q_project_types',type:'multi',
+  title:t('Quels types de projets vous donneraient envie de souscrire un abonnement mensuel ?','What types of projects would make you want to subscribe monthly?'),
+  sub:t('Plusieurs choix possibles.','Multiple choice.'),
+  opts:[
+    {v:'restaurant',l:t('Restaurant / café / alimentation','Restaurant / café / food')},
+    {v:'tech',l:t('Tech / application','Tech / app')},
+    {v:'creative',l:t('Artiste / créateur de contenu','Artist / content creator')},
+    {v:'social',l:t('Projet social / solidaire','Social / solidarity project')},
+    {v:'education',l:t('Éducation / formation','Education / training')},
+    {v:'health',l:t('Santé / bien-être','Health / wellbeing')},
+    {v:'local',l:t('Commerce local','Local business')},
+    {v:'green',l:t('Environnement / développement durable','Environment / sustainability')},
+    {v:'diaspora_proj',l:t('Projet d\'un fondateur de ma diaspora','Project by a founder from my diaspora')},
+  ]
+},
+
+// SECTION 7 — PLATFORM PERCEPTION
+{id:'q_trust_platform',type:'multi',
+  title:t('Qu\'est-ce qui vous donnerait confiance dans une plateforme d\'abonnement communautaire ?','What would give you confidence in a community subscription platform?'),
+  sub:t('Plusieurs choix possibles.','Multiple choice.'),
+  opts:[
+    {v:'transparency',l:t('Transparence totale sur l\'utilisation des fonds','Full transparency on how funds are used')},
+    {v:'track_record',l:t('Historique de projets réussis','Track record of successful projects')},
+    {v:'regulation',l:t('Agrément ou supervision réglementaire','Regulatory approval or oversight')},
+    {v:'community',l:t('Communauté active et visible','Active and visible community')},
+    {v:'low_fees',l:t('Frais bas et explicites','Low and explicit fees')},
+    {v:'exit',l:t('Possibilité de se désabonner facilement','Easy unsubscribe option')},
+    {v:'updates',l:t('Mises à jour régulières des projets soutenus','Regular updates on supported projects')},
+  ]
+},
+{id:'q_concern',type:'radio',
+  title:t('Si vous hésitiez à vous abonner à un tel service, quelle serait votre principale préoccupation ?','If you hesitated to subscribe to such a service, what would be your main concern?'),
+  opts:[
+    {v:'fraud',l:t('Risque d\'arnaque ou de fraude','Risk of scam or fraud')},
+    {v:'lose_money',l:t('Perdre mon argent sans impact réel','Losing my money without real impact')},
+    {v:'complexity',l:t('Complexité et manque de clarté','Complexity and lack of clarity')},
+    {v:'no_value',l:t('Ne pas voir la valeur concrète','Not seeing concrete value')},
+    {v:'already_give',l:t('Je donne déjà à d\'autres causes','I already give to other causes')},
+    {v:'none',l:t('Aucune — je serais prêt(e) à essayer','None — I\'d be ready to try')},
+  ]
+},
+
+// GOLDEN QUESTION
+{id:'q_golden',type:'text',textarea:true,
+  title:t('🏆 Si vous souteniez un projet aujourd\'hui, comment le feriez-vous concrètement ?','🏆 If you were to support a project today, how would you do it concretely?'),
+  sub:t('Ex : don ponctuel, partage sur les réseaux, achat de produit, investissement… Décrivez votre comportement naturel.','E.g. one-time donation, sharing on social media, buying a product, investing… Describe your natural behaviour.'),
+  placeholder:t('Décrivez librement…','Describe freely…')
+},
+
+// CONTACT
+{id:'q_contact',type:'contact',
+  title:t('Pour recevoir les résultats 🎁','To receive the results 🎁'),
+  sub:t('Optionnel. Si vous laissez votre email, vous recevrez un résumé de l\'étude et serez notifié(e) du lancement de la plateforme.','Optional. If you leave your email, you\'ll receive a study summary and be notified of the platform launch.')
+},
+{id:'thankyou',type:'thankyou'}
+];
+
+// ── ENGINE (same pattern) ──
+function renderAll(){
+  const c=document.getElementById('slides');c.innerHTML='';
+  questions.forEach((q,i)=>{
+    const d=document.createElement('div');d.className='slide'+(i===0?' active':'');d.id='slide_'+i;
+    d.innerHTML=renderSlide(q,i);c.appendChild(d);
+  });
+  updateNav();
+}
+
+function renderSlide(q,i){
+  if(q.type==='welcome') return renderWelcome();
+  if(q.type==='thankyou') return renderThankyou();
+  if(q.type==='contact') return renderContact(q,i);
+  const vi=getVI(i),tv=getTV();
+  let h=`<div class="slide-inner"><div class="q-num">${vi} / ${tv}</div><div class="q-title">${q.title}</div>`;
+  if(q.sub) h+=`<div class="q-sub">${q.sub}</div>`;
+  if(q.note) h+=`<div class="q-note">${q.note}</div>`;
+  const K=['A','B','C','D','E','F','G','H','I'];
+  if(q.type==='radio'){
+    h+=`<div class="opts">`;
+    q.opts.forEach((o,x)=>h+=`<div class="opt" data-qid="${q.id}" data-val="${o.v}" onclick="pickOpt('${q.id}','${o.v}')"><div class="opt-key">${K[x]}</div><div class="opt-text">${o.l}${o.desc?`<div class="opt-desc">${o.desc}</div>`:''}</div></div>`);
+    h+=`</div><div class="req-err">Please select / Veuillez sélectionner.</div>`;
+  } else if(q.type==='multi'){
+    h+=`<div class="multi-hint">${t('Plusieurs choix','Multiple choice')}</div><div class="opts">`;
+    q.opts.forEach((o,x)=>h+=`<div class="opt" data-qid="${q.id}" data-val="${o.v}" onclick="pickMulti('${q.id}','${o.v}',this)"><div class="opt-key">${K[x]}</div><div class="opt-text">${o.l}</div></div>`);
+    h+=`</div><button class="ok-btn" onclick="nextQ()">OK ↵</button>`;
+  } else if(q.type==='text'){
+    if(q.textarea) h+=`<textarea class="tf-input" id="inp_${q.id}" placeholder="${q.placeholder||''}" rows="4" oninput="answers['${q.id}']=this.value"></textarea>`;
+    else h+=`<input class="tf-input" type="text" id="inp_${q.id}" placeholder="${q.placeholder||''}" oninput="answers['${q.id}']=this.value" onkeydown="if(event.key==='Enter')nextQ()"/>`;
+    h+=`<button class="ok-btn" onclick="nextQ()">OK ↵</button>`;
+    if(q.optional) h+=`<div class="ok-hint">${t('Optionnel','Optional')}</div>`;
+    else h+=`<div class="req-err">Please fill in / Veuillez remplir.</div>`;
+  } else if(q.type==='scale'){
+    h+=`<div class="scale-row" id="scale_${q.id}">`;
+    for(let n=1;n<=10;n++) h+=`<div class="scale-btn" onclick="pickScale('${q.id}',${n})">${n}</div>`;
+    h+=`</div><div class="scale-ends"><span>${q.min}</span><span>${q.max}</span></div><div class="req-err">Please select / Veuillez sélectionner.</div>`;
+  }
+  return h+'</div>';
+}
+
+function renderWelcome(){
+  return `<div class="slide-inner welcome-slide">
+    <div class="q-num" style="justify-content:center">Subinvest · Community Survey</div>
+    <div class="q-title">${t('Quelques questions sur vos habitudes','A few questions about your habits')}</div>
+    <div class="q-sub">${t('Cette étude nous aide à mieux comprendre comment les gens soutiennent les projets qui leur tiennent à cœur. Anonyme et confidentielle. ~8 minutes.','This study helps us understand how people support projects they care about. Anonymous and confidential. ~8 minutes.')}</div>
+    <div class="stats">
+      <div class="stat"><div class="stat-v">~8</div><div class="stat-l">min</div></div>
+      <div class="stat"><div class="stat-v">🔒</div><div class="stat-l">${t('Anonyme','Anonymous')}</div></div>
+      <div class="stat"><div class="stat-v">🎁</div><div class="stat-l">${t('Résultats offerts','Results shared')}</div></div>
+    </div>
+    <button class="start-btn" onclick="startSurvey()">${t('Commencer →','Start →')}</button>
+  </div>`;
+}
+
+function renderThankyou(){
+  return `<div class="slide-inner ty">
+    <div class="ty-icon">🙌</div>
+    <div class="ty-title">${t('Merci !','Thank you!')}</div>
+    <p class="ty-sub">${t('Vos réponses nous aident à construire quelque chose de vraiment utile. Nous partagerons les résultats avec tous les participants.','Your answers help us build something truly useful. We\'ll share results with all participants.')}</p>
+    <div class="share-row">
+      <button class="share-btn" onclick="shareLinkedIn()">🔗 LinkedIn</button>
+      <button class="share-btn" onclick="shareWhatsApp()">💬 WhatsApp</button>
+    </div>
+  </div>`;
+}
+
+function renderContact(q,i){
+  const vi=getVI(i),tv=getTV();
+  return `<div class="slide-inner">
+    <div class="q-num">${vi} / ${tv}</div>
+    <div class="q-title">${q.title}</div>
+    <div class="q-sub">${q.sub}</div>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
+      <div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">${t('Prénom (optionnel)','First name (optional)')}</div>
+        <input class="tf-input" type="text" id="c_name" placeholder="${t('Marie','Marie')}" style="font-size:16px" oninput="answers.c_name=this.value"/></div>
+      <div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">${t('Email (optionnel)','Email (optional)')}</div>
+        <input class="tf-input" type="email" id="c_email" placeholder="marie@email.com" style="font-size:16px" oninput="answers.c_email=this.value"/></div>
+    </div>
+    <button class="ok-btn" onclick="submitForm()" id="submitBtn">${t('Envoyer →','Submit →')}</button>
+    <div class="ok-hint">${t('Vous pouvez aussi envoyer sans laisser vos coordonnées.','You can also submit without leaving your details.')}</div>
+  </div>`;
+}
+
+function getVQ(){return questions.map((q,i)=>({q,i})).filter(({q})=>{
+  if(q.type==='welcome'||q.type==='thankyou') return false;
+  if(q.conditional){const d=answers[q.conditional.id];const v=Array.isArray(q.conditional.val)?q.conditional.val:[q.conditional.val];return v.includes(d)}
+  return true;
+})}
+function getVI(si){const v=getVQ();const i=v.findIndex(x=>x.i===si);return i>=0?i+1:'—'}
+function getTV(){return getVQ().length}
+function startSurvey(){started=true;document.getElementById('bottomNav').style.display='flex';goTo(1)}
+
+function goTo(idx){
+  const sl=document.querySelectorAll('.slide');
+  sl[current].classList.remove('active');sl[current].classList.add('exit-up');
+  setTimeout(()=>sl[current].classList.remove('exit-up'),450);
+  current=idx;sl[current].classList.add('active');updateNav();updateProg();
+  setTimeout(()=>{const inp=sl[current].querySelector('input,textarea');if(inp)inp.focus()},500);
+}
+function nextQ(){
+  const q=questions[current];
+  if(q.type==='radio'&&!answers[q.id]&&!q.optional){document.querySelector('#slide_'+current+' .req-err').style.display='block';return}
+  if(q.type==='text'&&!q.optional){const v=document.getElementById('inp_'+q.id)?.value?.trim();if(!v){document.querySelector('#slide_'+current+' .req-err').style.display='block';return}}
+  if(q.type==='scale'&&!answers[q.id]){document.querySelector('#slide_'+current+' .req-err').style.display='block';return}
+  let next=current+1;
+  while(next<questions.length-1){const nq=questions[next];if(nq.conditional){const d=answers[nq.conditional.id];const v=Array.isArray(nq.conditional.val)?nq.conditional.val:[nq.conditional.val];if(!v.includes(d)){next++;continue}}break;}
+  if(next<questions.length) goTo(next);
+}
+function prevQ(){
+  if(current<=1)return;let prev=current-1;
+  while(prev>0){const pq=questions[prev];if(pq.conditional){const d=answers[pq.conditional.id];const v=Array.isArray(pq.conditional.val)?pq.conditional.val:[pq.conditional.val];if(!v.includes(d)){prev--;continue}}break;}
+  const sl=document.querySelectorAll('.slide');sl[current].classList.remove('active');current=prev;sl[current].classList.add('active');updateNav();updateProg();
+}
+function updateNav(){
+  document.getElementById('btnUp').disabled=current<=1;document.getElementById('btnDown').disabled=current>=questions.length-1;
+  const v=getVQ();const i=v.findIndex(x=>x.i===current);document.getElementById('navCounter').textContent=i>=0?`${i+1} / ${v.length}`:'';
+}
+function updateProg(){
+  const v=getVQ();const i=v.findIndex(x=>x.i===current);
+  document.getElementById('pf').style.width=(v.length>0&&i>=0?Math.round(((i+1)/v.length)*100):0)+'%';
+}
+function pickOpt(qid,val){
+  answers[qid]=val;const slide=questions.findIndex(q=>q.id===qid);
+  document.querySelectorAll('#slide_'+slide+' .opt[data-qid="'+qid+'"]').forEach(o=>o.classList.toggle('sel',o.dataset.val===val));
+  const err=document.querySelector('#slide_'+slide+' .req-err');if(err)err.style.display='none';
+  setTimeout(()=>nextQ(),300);
+}
+function pickMulti(qid,val,el){
+  if(!answers[qid])answers[qid]=[];const i=answers[qid].indexOf(val);if(i>=0)answers[qid].splice(i,1);else answers[qid].push(val);
+  el.classList.toggle('sel',answers[qid].includes(val));
+}
+function pickScale(qid,val){
+  answers[qid]=val;document.querySelectorAll('#scale_'+qid+' .scale-btn').forEach((b,i)=>b.classList.toggle('sel',i+1===val));
+  setTimeout(()=>nextQ(),350);
+}
+document.addEventListener('keydown',e=>{
+  if(!started)return;const q=questions[current];
+  if(e.key==='Enter'&&q.type!=='radio'&&q.type!=='scale')nextQ();
+  if(e.key==='ArrowDown')nextQ();if(e.key==='ArrowUp')prevQ();
+  if(q.type==='radio'||q.type==='multi'){
+    const K=['a','b','c','d','e','f','g','h','i'];const idx=K.indexOf(e.key.toLowerCase());
+    if(idx>=0&&q.opts&&q.opts[idx]){if(q.type==='radio')pickOpt(q.id,q.opts[idx].v);else{const el=document.querySelector('#slide_'+current+' .opt[data-val="'+q.opts[idx].v+'"]');if(el)pickMulti(q.id,q.opts[idx].v,el)}}
+  }
+});
+
+async function submitForm(){
+  const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent=t('Envoi…','Sending…');
+  const payload={};
+  payload['_subject']=(`[Subinvest Community] ${answers.c_name||'Anonymous'}`);
+  if(answers.c_email) payload['_replyto']=(answers.c_email);
+  payload['Age']=(answers.q_age||'—');payload['Gender']=(answers.q_gender||'—');
+  payload['Country']=(answers.q_country||'—');payload['Origin']=(answers.q_origin||'—');
+  payload['Community']=(answers.q_community||'—');payload['Community (which)']=(answers.q_community_which||'—');
+  payload['Job situation']=(answers.q_job||'—');payload['Monthly income']=(answers.q_income||'—');
+  payload['Money behaviour']=(answers.q_savings_behaviour||'—');
+  payload['Number of subs']=(answers.q_subs_count||'—');payload['Total sub spend/mo']=(answers.q_subs_total||'—');
+  payload['Sub services']=((answers.q_subs_services||[]).join(', ')||'—');
+  payload['Cancel reason']=(answers.q_sub_cancel_reason||'—');
+  payload['Investment experience']=(answers.q_invest_experience||'—');
+  payload['Risk appetite (1-10)']=(answers.q_risk_appetite||'—');
+  payload['Max comfortable to lose']=(answers.q_max_lose||'—');
+  payload['Support motivation']=(answers.q_support_motivation||'—');
+  payload['Max monthly for project']=(answers.q_max_sub_project||'—');
+  payload['ROI expectation']=(answers.q_roi_expectation||'—');
+  payload['Diaspora invest preference']=(answers.q_diaspora_invest||'—');
+  payload['Project types interest']=((answers.q_project_types||[]).join(', ')||'—');
+  payload['Platform trust factors']=((answers.q_trust_platform||[]).join(', ')||'—');
+  payload['Main concern']=(answers.q_concern||'—');
+  payload['🏆 Natural support behaviour']=(answers.q_golden||'—');
+  payload['Name']=(answers.c_name||'Anonymous');payload['Email']=(answers.c_email||'—');
+  payload['Language']=(lang);payload['Submitted at']=(new Date().toLocaleString('en-GB',{timeZone:'Europe/Paris'}));
+  try{
+    const res=await fetch('https://formspree.io/f/xlgkowwr',{method:'POST',body:JSON.stringify(payload),headers:{'Accept':'application/json','Content-Type':'application/json'}});
+    if(res.ok)goTo(questions.length-1);else throw new Error();
+  }catch{btn.disabled=false;btn.textContent='⚠️ Error — retry'}
+}
+
+function setLang(l){lang=l;document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',b.textContent.toLowerCase().includes(l)));renderAll();if(started)document.getElementById('bottomNav').style.display='flex'}
+function shareLinkedIn(){window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(location.href)}`,'_blank')}
+function shareWhatsApp(){window.open(`https://wa.me/?text=${encodeURIComponent(t('💜 Subinvest — Quelques questions sur vos habitudes de soutien aux projets\n','💜 Subinvest — A few questions about how you support projects\n')+location.href)}`,'_blank')}
+
+renderAll();
+</script>
+</body>
+</html>
