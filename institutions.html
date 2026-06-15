@@ -4,563 +4,373 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Subinvest — Institutional Survey</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0A1628;--surface:#0F1E38;--card:#162440;--border:#1E3258;
-  --text:#F0EDE6;--muted:#7A90B0;--accent:#4A9EE8;--accent-dim:#0E2040;
-  --gold:#E8A94A;--gold-dim:#3A2A0A;--danger:#E05555;--r:12px;
-}
-html,body{height:100%;overflow:hidden}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6}
-.lang-bar{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:rgba(10,22,40,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
-.brand{font-family:'DM Serif Display',serif;font-size:16px;color:var(--accent)}
-.lang-btns{display:flex;gap:6px}
-.lb{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
-.lb.on{background:var(--accent);color:#0A1628;border-color:var(--accent);font-weight:600}
-.prog{position:fixed;top:41px;left:0;right:0;z-index:199;height:3px;background:var(--border)}
-.prog-fill{height:100%;background:var(--accent);transition:width .5s cubic-bezier(.4,0,.2,1);width:0%}
-.slides{position:fixed;top:44px;left:0;right:0;bottom:56px;overflow:hidden}
-.slide{position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;padding:16px 20px;opacity:0;pointer-events:none;transform:translateY(40px);transition:all .45s cubic-bezier(.4,0,.2,1);overflow-y:auto;-webkit-overflow-scrolling:touch}
-.slide.active{opacity:1;pointer-events:all;transform:translateY(0)}
-.slide.exit-up{opacity:0;transform:translateY(-40px)}
-.slide-inner{width:100%;max-width:640px;padding-bottom:24px;margin:auto}
-.q-num{font-size:12px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
-.q-num::after{content:'→';opacity:.5}
-.q-title{font-family:'DM Serif Display',serif;font-size:clamp(20px,3.5vw,30px);line-height:1.2;margin-bottom:8px}
-.q-sub{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.7}
-.q-note{display:inline-block;font-size:12px;color:var(--gold);background:var(--gold-dim);padding:5px 12px;border-radius:6px;margin-bottom:16px}
-.opts{display:flex;flex-direction:column;gap:8px}
-.opt{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:var(--card);color:var(--text);font-size:14px}
-.opt:hover{border-color:var(--accent);background:var(--accent-dim)}
-.opt.sel{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
-.opt-key{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--muted);flex-shrink:0;margin-top:1px;transition:all .15s;background:var(--bg)}
-.opt.sel .opt-key{background:var(--accent);color:#0A1628;border-color:var(--accent)}
-.opt-text{flex:1;line-height:1.4}
-.opt-desc{font-size:12px;color:var(--muted);margin-top:2px}
-.opt.sel .opt-desc{color:rgba(74,158,232,.7)}
-.multi-hint{font-size:11px;color:var(--muted);margin-bottom:10px}
-.tf-input{width:100%;background:transparent;border:none;border-bottom:2px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:18px;padding:10px 0;outline:none;transition:border .2s}
-.tf-input:focus{border-bottom-color:var(--accent)}
-.tf-input::placeholder{color:var(--muted)}
-textarea.tf-input{resize:none;min-height:90px;border:1px solid var(--border);border-radius:var(--r);padding:14px;font-size:14px;background:var(--card)}
-textarea.tf-input:focus{border-color:var(--accent)}
-.scale-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
-.scale-btn{flex:1;min-width:38px;padding:11px 4px;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:13px;cursor:pointer;background:var(--card);color:var(--text);transition:all .15s;font-family:'DM Sans',sans-serif}
-.scale-btn:hover{border-color:var(--accent)}
-.scale-btn.sel{background:var(--accent);color:#0A1628;border-color:var(--accent);font-weight:600}
-.scale-ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:5px}
-.ok-btn{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:12px 24px;background:var(--accent);color:#0A1628;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s}
-.ok-btn:hover{opacity:.85}
-.ok-btn:disabled{opacity:.3;cursor:not-allowed}
-.ok-hint{font-size:11px;color:var(--muted);margin-top:8px}
-.welcome-slide{text-align:center;padding-top:20px}
-.welcome-slide .q-title{font-size:clamp(24px,4.5vw,38px);margin-bottom:16px}
-.stats{display:flex;justify-content:center;gap:0;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;max-width:420px;margin:0 auto 32px}
-.stat{flex:1;padding:14px;text-align:center;border-right:1px solid var(--border)}
-.stat:last-child{border-right:none}
-.stat-v{font-family:'DM Serif Display',serif;font-size:20px;color:var(--accent)}
-.stat-l{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
-.start-btn{padding:14px 40px;background:var(--accent);color:#0A1628;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:rgba(10,22,40,.95);backdrop-filter:blur(8px);border-top:1px solid var(--border)}
-.nav-btns{display:flex;gap:8px}
-.nav-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
-.nav-btn:disabled{opacity:.3;cursor:not-allowed}
-.nav-counter{font-size:12px;color:var(--muted)}
-.ty{text-align:center}
-.ty-icon{font-size:52px;margin-bottom:16px}
-.ty-title{font-family:'DM Serif Display',serif;font-size:30px;color:var(--accent);margin-bottom:10px}
-.ty-sub{font-size:14px;color:var(--muted);max-width:440px;margin:0 auto 24px;line-height:1.8}
+:root{--bg:#F8F6F1;--white:#FFFFFF;--ink:#1A1916;--ink2:#4A4845;--line:#E2DED6;--accent:#1A3A6B;--accent-bg:#EBF0F9;--gold:#A0722A;--gold-bg:#FAF3E6;--red:#C0392B;--r:8px;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh}
+.topbar{background:var(--accent);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:'Instrument Serif',serif;font-size:18px;color:#fff}
+
+
+
+.hero{background:var(--accent);padding:40px 24px 48px;color:#fff}
+.hero-tag{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.6;margin-bottom:12px;font-weight:500}
+.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(26px,4.5vw,40px);line-height:1.1;margin-bottom:12px;max-width:600px}
+.hero h1 em{font-style:italic;opacity:.8}
+.hero-sub{font-size:14px;opacity:.72;max-width:500px;line-height:1.75;margin-bottom:28px}
+.hero-meta{display:flex;gap:20px;flex-wrap:wrap}
+.hm{font-size:12px;opacity:.55}
+.progress-bar{height:3px;background:rgba(255,255,255,.15)}
+.progress-fill{height:100%;background:#fff;transition:width .4s ease;width:0%}
+.main{max-width:680px;margin:0 auto;padding:40px 20px 80px}
+.section-label{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-top:32px}
+.section-label:first-child{padding-top:0}
+.sl-letter{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sl-text{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink2)}
+.qcard{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:10px;transition:border-color .15s}
+.qcard:focus-within{border-color:var(--accent)}
+.qcard.has-error{border-color:var(--red)}
+.ql{font-size:14px;font-weight:500;margin-bottom:4px;line-height:1.5}
+.qs{font-size:12px;color:var(--ink2);margin-bottom:14px;line-height:1.6}
+.qnote{display:inline-block;font-size:11px;color:var(--gold);background:var(--gold-bg);padding:4px 10px;border-radius:5px;margin-bottom:12px;font-weight:500}
+.req{color:var(--red)}
+.err{font-size:11px;color:var(--red);margin-top:6px;display:none}
+.qcard.has-error .err{display:block}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--line);border-radius:6px;cursor:pointer;transition:all .15s;background:var(--bg);font-size:13px;color:var(--ink);user-select:none}
+.opt:hover{border-color:var(--accent);background:var(--accent-bg)}
+.opt.sel{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);font-weight:500}
+.opt-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.opt.sel .opt-dot{border-color:var(--accent);background:var(--accent)}
+.opt.sel .opt-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.opt-sq{width:16px;height:16px;border-radius:4px;border:2px solid var(--line);flex-shrink:0;transition:all .15s}
+.opt.sel .opt-sq{border-color:var(--accent);background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8'%3E%3Cpath fill='%23fff' stroke='%23fff' stroke-width='1' d='M1 4l3 3 5-6'/%3E%3C/svg%3E") center/10px no-repeat}
+.opt-lbl{flex:1;line-height:1.4}
+.multi-note{font-size:11px;color:var(--ink2);margin-bottom:8px;font-style:italic}
+input[type=text],input[type=email],select,textarea{width:100%;border:1px solid var(--line);border-radius:6px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:#fff;outline:none;transition:border .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:88px;line-height:1.6}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%234A4845' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.field-lbl{font-size:12px;font-weight:500;color:var(--ink2);margin-bottom:5px;display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.grid2{grid-template-columns:1fr}}
+.divider{height:1px;background:var(--line);margin:8px 0 0}
+.submit-area{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:28px;margin-top:24px;text-align:center}
+.submit-area h3{font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:6px}
+.submit-area p{font-size:13px;color:var(--ink2);margin-bottom:20px;line-height:1.6}
+.btn-submit{background:var(--accent);color:#fff;border:none;padding:13px 40px;border-radius:6px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;min-width:200px}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+#thankyou{display:none;text-align:center;padding:60px 20px;max-width:500px;margin:0 auto}
+.ty-icon{font-size:48px;margin-bottom:16px}
+.ty-h{font-family:'Instrument Serif',serif;font-size:32px;color:var(--accent);margin-bottom:10px}
+.ty-p{font-size:14px;color:var(--ink2);line-height:1.8;margin-bottom:24px}
 .share-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-.share-btn{padding:10px 20px;border-radius:8px;font-size:13px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
-.share-btn:hover{border-color:var(--accent);color:var(--accent)}
-.req-err{font-size:12px;color:var(--danger);margin-top:8px;display:none}
+.share-btn{padding:9px 20px;border-radius:6px;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;font-family:'Inter',sans-serif;font-weight:500}
+
 </style>
 </head>
 <body>
-<div class="lang-bar">
-  <div class="brand">Subinvest · Institutional</div>
-  <div class="lang-btns">
-    <button class="lb" onclick="setLang('fr')">🇫🇷 FR</button>
-    <button class="lb on" onclick="setLang('en')">🇬🇧 EN</button>
-  </div>
+<div class="topbar">
+ <div class="logo">Subinvest</div>
+ 
 </div>
-<div class="prog"><div class="prog-fill" id="pf"></div></div>
-<div class="slides" id="slides"></div>
-<div class="bottom-nav" id="bottomNav" style="display:none">
-  <div class="nav-counter" id="navCounter"></div>
-  <div class="nav-btns">
-    <button class="nav-btn" id="btnUp" onclick="prevQ()">↑</button>
-    <button class="nav-btn" id="btnDown" onclick="nextQ()">↓</button>
-  </div>
+<div class="hero">
+ <div class="hero-tag">Institutional Survey</div>
+ <h1>Your expert view on <em>the financing ecosystem</em></h1>
+ <p class="hero-sub">This feasibility study gathers perspectives from institutional players — incubators, accelerators, universities, public agencies. ~12 minutes.</p>
+ <div class="hero-meta"><span class="hm">⏱ ~12 min</span><span class="hm">🔒 Confidential</span><span class="hm">📊 Results shared</span></div>
 </div>
+<div class="progress-bar"><div class="progress-fill" id="pf"></div></div>
+
+<div class="main" id="formMain">
+
+<div class="section-label"><div class="sl-letter">A</div><div class="sl-text">Your organisation</div></div>
+
+<div class="qcard" id="q_org_type">
+ <div class="ql">What best describes your organisation? <span class="req">*</span></div>
+ <div class="opts" data-type="radio" data-key="q_org_type">
+ <div class="opt" data-v="incubator"><div class="opt-dot"></div><div class="opt-lbl">Incubator</div></div>
+ <div class="opt" data-v="accelerator"><div class="opt-dot"></div><div class="opt-lbl">Accelerator</div></div>
+ <div class="opt" data-v="university"><div class="opt-dot"></div><div class="opt-lbl">University / Grande école</div></div>
+ <div class="opt" data-v="public_agency"><div class="opt-dot"></div><div class="opt-lbl">Public agency (BPI, French Tech…)</div></div>
+ <div class="opt" data-v="chamber"><div class="opt-dot"></div><div class="opt-lbl">Chamber of commerce / CCI</div></div>
+ <div class="opt" data-v="foundation"><div class="opt-dot"></div><div class="opt-lbl">Foundation / Association</div></div>
+ <div class="opt" data-v="other"><div class="opt-dot"></div><div class="opt-lbl">Other</div></div>
+ </div>
+ <div class="err">Please select an option.</div>
+</div>
+
+<div class="qcard">
+ <div class="ql">Organisation name and city</div>
+ <div class="grid2" style="margin-top:8px">
+ <div><input type="text" data-key="q_org_name" placeholder="Station F, ESSEC..." oninput="save(this)"/></div>
+ <div><input type="text" data-key="q_country" placeholder="Paris, France" oninput="save(this)"/></div>
+ </div>
+</div>
+
+<div class="qcard" id="q_startups_yr">
+ <div class="ql">How many startups do you support per year?</div>
+ <div class="opts" data-type="radio" data-key="q_startups_yr">
+ <div class="opt" data-v="lt10"><div class="opt-dot"></div><div class="opt-lbl">&lt; 10</div></div>
+ <div class="opt" data-v="10_50"><div class="opt-dot"></div><div class="opt-lbl">10 – 50</div></div>
+ <div class="opt" data-v="50_200"><div class="opt-dot"></div><div class="opt-lbl">50 – 200</div></div>
+ <div class="opt" data-v="gt200"><div class="opt-dot"></div><div class="opt-lbl">&gt; 200</div></div>
+ </div>
+</div>
+
+<div class="divider"></div>
+<div class="section-label"><div class="sl-letter">B</div><div class="sl-text">What you observe</div></div>
+
+<div class="qcard" id="q_challenges">
+ <div class="ql">What are the most common difficulties among the project holders you support? <span class="req">*</span></div>
+ <div class="qs">Select only what you actually observe.</div>
+ <div class="multi-note">Multiple choice</div>
+ <div class="opts" data-type="multi" data-key="q_challenges">
+ <div class="opt" data-v="product"><div class="opt-sq"></div><div class="opt-lbl">Product / technical development</div></div>
+ <div class="opt" data-v="market"><div class="opt-sq"></div><div class="opt-lbl">Market validation</div></div>
+ <div class="opt" data-v="team"><div class="opt-sq"></div><div class="opt-lbl">Team building</div></div>
+ <div class="opt" data-v="funding"><div class="opt-sq"></div><div class="opt-lbl">Access to funding</div></div>
+ <div class="opt" data-v="legal"><div class="opt-sq"></div><div class="opt-lbl">Legal and administrative aspects</div></div>
+ <div class="opt" data-v="network"><div class="opt-sq"></div><div class="opt-lbl">Lack of network</div></div>
+ <div class="opt" data-v="mentorship"><div class="opt-sq"></div><div class="opt-lbl">Mentorship and coaching</div></div>
+ <div class="opt" data-v="other"><div class="opt-sq"></div><div class="opt-lbl">Other</div></div>
+ </div>
+ <div class="err">Please select at least one option.</div>
+</div>
+
+<div class="qcard" id="q_dropout_reason">
+ <div class="ql">Among projects that don't reach their next stage, what do you observe as the main reason?</div>
+ <div class="opts" data-type="radio" data-key="q_dropout_reason">
+ <div class="opt" data-v="product_fit"><div class="opt-dot"></div><div class="opt-lbl">Product or market not yet validated</div></div>
+ <div class="opt" data-v="team"><div class="opt-dot"></div><div class="opt-lbl">Team or leadership issue</div></div>
+ <div class="opt" data-v="capital"><div class="opt-dot"></div><div class="opt-lbl">Lack of capital at the right time</div></div>
+ <div class="opt" data-v="execution"><div class="opt-dot"></div><div class="opt-lbl">Execution problem</div></div>
+ <div class="opt" data-v="external"><div class="opt-dot"></div><div class="opt-lbl">External factors</div></div>
+ <div class="opt" data-v="combination"><div class="opt-dot"></div><div class="opt-lbl">Combination of factors</div></div>
+ </div>
+</div>
+
+<div class="qcard">
+ <div class="ql">Can you describe a typical case you've observed — without naming anyone?</div>
+ <div class="qs">Optional. These anonymised accounts are very valuable.</div>
+ <textarea data-key="q_open_case" placeholder="" oninput="save(this)"></textarea>
+</div>
+
+<div class="divider"></div>
+<div class="section-label"><div class="sl-letter">C</div><div class="sl-text">Foreign & immigrant founders</div></div>
+
+<div class="qcard" id="q_foreign_prop">
+ <div class="ql">What proportion of project holders were born abroad or have an immigrant background?</div>
+ <div class="opts" data-type="radio" data-key="q_foreign_prop">
+ <div class="opt" data-v="lt10"><div class="opt-dot"></div><div class="opt-lbl">&lt; 10%</div></div>
+ <div class="opt" data-v="10_30"><div class="opt-dot"></div><div class="opt-lbl">10% – 30%</div></div>
+ <div class="opt" data-v="30_50"><div class="opt-dot"></div><div class="opt-lbl">30% – 50%</div></div>
+ <div class="opt" data-v="gt50"><div class="opt-dot"></div><div class="opt-lbl">&gt; 50%</div></div>
+ <div class="opt" data-v="no_data"><div class="opt-dot"></div><div class="opt-lbl">We don't collect this data</div></div>
+ </div>
+</div>
+
+<div class="qcard" id="q_foreign_diff">
+ <div class="ql">Do you observe differences in the journey of foreign founders?</div>
+ <div class="multi-note">Select only what you have actually observed</div>
+ <div class="opts" data-type="multi" data-key="q_foreign_diff">
+ <div class="opt" data-v="no_diff"><div class="opt-sq"></div><div class="opt-lbl">No — no significant difference</div></div>
+ <div class="opt" data-v="network"><div class="opt-sq"></div><div class="opt-lbl">Less developed local network</div></div>
+ <div class="opt" data-v="banking"><div class="opt-sq"></div><div class="opt-lbl">More difficult banking access</div></div>
+ <div class="opt" data-v="admin"><div class="opt-sq"></div><div class="opt-lbl">More complex administrative procedures</div></div>
+ <div class="opt" data-v="trust"><div class="opt-sq"></div><div class="opt-lbl">Difficulty building trust with local partners</div></div>
+ <div class="opt" data-v="faster"><div class="opt-sq"></div><div class="opt-lbl">Paradoxically more motivated and faster</div></div>
+ <div class="opt" data-v="other"><div class="opt-sq"></div><div class="opt-lbl">Other</div></div>
+ </div>
+</div>
+
+<div class="qcard" id="q_foreign_funding">
+ <div class="ql">How would you describe foreign founders' access to financing in your programme? <span class="req">*</span></div>
+ <div class="opts" data-type="radio" data-key="q_foreign_funding">
+ <div class="opt" data-v="same"><div class="opt-dot"></div><div class="opt-lbl">Same as local founders</div></div>
+ <div class="opt" data-v="slightly_harder"><div class="opt-dot"></div><div class="opt-lbl">Slightly more difficult</div></div>
+ <div class="opt" data-v="harder"><div class="opt-dot"></div><div class="opt-lbl">Noticeably more difficult</div></div>
+ <div class="opt" data-v="much_harder"><div class="opt-dot"></div><div class="opt-lbl">Much more difficult</div></div>
+ <div class="opt" data-v="no_data"><div class="opt-dot"></div><div class="opt-lbl">Not enough data to answer</div></div>
+ </div>
+ <div class="err">Please select an option.</div>
+</div>
+
+<div class="divider"></div>
+<div class="section-label"><div class="sl-letter">D</div><div class="sl-text">Public funding</div></div>
+
+<div class="qcard" id="q_grant_gap">
+ <div class="ql">Have you observed situations where funding was granted but the project holder couldn't benefit from it? <span class="req">*</span></div>
+ <div class="opts" data-type="radio" data-key="q_grant_gap">
+ <div class="opt" data-v="never"><div class="opt-dot"></div><div class="opt-lbl">Never</div></div>
+ <div class="opt" data-v="rarely"><div class="opt-dot"></div><div class="opt-lbl">Rarely (&lt; 10% of cases)</div></div>
+ <div class="opt" data-v="sometimes"><div class="opt-dot"></div><div class="opt-lbl">Sometimes (10 – 30%)</div></div>
+ <div class="opt" data-v="often"><div class="opt-dot"></div><div class="opt-lbl">Often (&gt; 30%)</div></div>
+ <div class="opt" data-v="no_data"><div class="opt-dot"></div><div class="opt-lbl">I don't have this data</div></div>
+ </div>
+ <div class="err">Please select an option.</div>
+</div>
+
+<div class="qcard">
+ <div class="ql">If yes, what reasons did you observe?</div>
+ <div class="multi-note">Multiple choice</div>
+ <div class="opts" data-type="multi" data-key="q_grant_gap_reason">
+ <div class="opt" data-v="capital"><div class="opt-sq"></div><div class="opt-lbl">Capital conditions not met</div></div>
+ <div class="opt" data-v="admin"><div class="opt-sq"></div><div class="opt-lbl">Incomplete administrative file</div></div>
+ <div class="opt" data-v="timing"><div class="opt-sq"></div><div class="opt-lbl">Timing mismatch</div></div>
+ <div class="opt" data-v="capacity"><div class="opt-sq"></div><div class="opt-lbl">Insufficient absorption capacity</div></div>
+ <div class="opt" data-v="other"><div class="opt-sq"></div><div class="opt-lbl">Other</div></div>
+ </div>
+</div>
+
+<div class="divider"></div>
+<div class="section-label"><div class="sl-letter">E</div><div class="sl-text">Open questions</div></div>
+
+<div class="qcard">
+ <div class="ql">If you could design a service that doesn't exist yet for the startups you support, what would it look like?</div>
+ <textarea data-key="q_missing_solution" placeholder="" oninput="save(this)"></textarea>
+</div>
+
+<div class="qcard" id="q_collab">
+ <div class="ql">How open would you be to collaborating with a platform helping your project holders structure community-based financing before applying for public funding?</div>
+ <div class="opts" data-type="radio" data-key="q_collab">
+ <div class="opt" data-v="very"><div class="opt-dot"></div><div class="opt-lbl">Very open — it addresses a real need</div></div>
+ <div class="opt" data-v="open"><div class="opt-dot"></div><div class="opt-lbl">Open — worth exploring</div></div>
+ <div class="opt" data-v="neutral"><div class="opt-dot"></div><div class="opt-lbl">Neutral</div></div>
+ <div class="opt" data-v="skeptical"><div class="opt-dot"></div><div class="opt-lbl">Sceptical</div></div>
+ <div class="opt" data-v="no"><div class="opt-dot"></div><div class="opt-lbl">Not interested</div></div>
+ </div>
+</div>
+
+<div class="qcard" id="q_golden">
+ <div class="ql">🏆 In your view, what is fundamentally missing in the early-stage startup financing ecosystem? <span class="req">*</span></div>
+ <textarea data-key="q_golden" placeholder="" oninput="save(this)"></textarea>
+ <div class="err">Please answer this question.</div>
+</div>
+
+<div class="divider"></div>
+<div class="section-label"><div class="sl-letter">F</div><div class="sl-text">Contact details</div></div>
+
+<div class="qcard">
+ <div class="ql">To share results and invite you to a co-design workshop</div>
+ <div class="qs">Everything is optional.</div>
+ <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
+ <div class="grid2">
+ <div><label class="field-lbl">Full name</label><input type="text" data-key="c_name" placeholder="Dr. Marie Dupont" oninput="save(this)"/></div>
+ <div><label class="field-lbl">Role</label><input type="text" data-key="c_role" placeholder="Directeur programme..." oninput="save(this)"/></div>
+ </div>
+ <div class="grid2">
+ <div><label class="field-lbl">Email</label><input type="email" data-key="c_email" placeholder="marie@org.fr" oninput="save(this)"/></div>
+ <div><label class="field-lbl">LinkedIn</label><input type="text" data-key="c_linkedin" placeholder="linkedin.com/in/..." oninput="save(this)"/></div>
+ </div>
+ <div>
+ <label class="field-lbl">Available for an in-depth interview?</label>
+ <div class="opts" data-type="radio" data-key="c_interview" style="flex-direction:row;flex-wrap:wrap">
+ <div class="opt" data-v="yes" style="flex:1;min-width:120px"><div class="opt-dot"></div><div class="opt-lbl" style="font-size:12px">Oui / Yes</div></div>
+ <div class="opt" data-v="maybe" style="flex:1;min-width:120px"><div class="opt-dot"></div><div class="opt-lbl" style="font-size:12px">Maybe</div></div>
+ <div class="opt" data-v="no" style="flex:1;min-width:120px"><div class="opt-dot"></div><div class="opt-lbl" style="font-size:12px">Non / No</div></div>
+ </div>
+ </div>
+ </div>
+</div>
+
+<div class="submit-area">
+ <h3>Thank you for your contribution 🎓</h3>
+ <p>Your expertise directly contributes to this feasibility study.</p>
+ <button class="btn-submit" id="submitBtn" onclick="submitForm()">Submit my answers</button>
+</div>
+</div>
+
+<div id="thankyou">
+ <div class="ty-icon">🎓</div>
+ <div class="ty-h">Thank you!</div>
+ <p class="ty-p">Your contribution is invaluable. We will share consolidated results.</p>
+ <div class="share-row">
+ <button class="share-btn" onclick="shareLinkedIn()">🔗 LinkedIn</button>
+ <button class="share-btn" onclick="shareWhatsApp()">💬 WhatsApp</button>
+ </div>
+</div>
+
 <script>
-let lang='en',current=0,answers={},started=false;
-function t(fr,en){return lang==='fr'?fr:en}
 
-const questions=[
-{id:'welcome',type:'welcome'},
-
-// SECTION 1 — PROFILE (neutral, no assumptions)
-{id:'q_org_type',type:'radio',
-  title:t('Quelle est la nature de votre organisation ?','What best describes your organisation?'),
-  opts:[
-    {v:'incubator',l:t('Incubateur','Incubator')},
-    {v:'accelerator',l:t('Accélérateur','Accelerator')},
-    {v:'university',l:t('Université / Grande école','University / Grande école')},
-    {v:'public_agency',l:t('Agence publique (BPI, French Tech, ADEME…)','Public agency (BPI, French Tech, ADEME…)')},
-    {v:'chamber',l:t('Chambre de commerce / CCI','Chamber of commerce / CCI')},
-    {v:'foundation',l:t('Fondation / Association','Foundation / Association')},
-    {v:'other',l:t('Autre','Other')},
-  ]
-},
-{id:'q_org_name',type:'text',optional:true,
-  title:t('Nom de votre organisation ?','Name of your organisation?'),
-  sub:t('Optionnel — pour personnaliser notre suivi.','Optional — to personalise our follow-up.'),
-  placeholder:t('ex. Station F, ESSEC Ventures…','e.g. Station F, ESSEC Ventures…')
-},
-{id:'q_country',type:'text',
-  title:t('Dans quelle ville et quel pays êtes-vous basé(e) ?','What city and country are you based in?'),
-  placeholder:t('ex. Paris, France','e.g. Paris, France')
-},
-{id:'q_startups_per_year',type:'radio',
-  title:t('Combien de startups accompagnez-vous ou financez-vous par an ?','How many startups do you support or fund per year?'),
-  opts:[
-    {v:'lt10',l:'< 10'},
-    {v:'10_50',l:'10 – 50'},
-    {v:'50_200',l:'50 – 200'},
-    {v:'gt200',l:'> 200'},
-  ]
-},
-{id:'q_stage_focus',type:'multi',
-  title:t('À quels stades de développement intervenez-vous principalement ?','At what development stages do you primarily work?'),
-  sub:t('Plusieurs choix possibles.','Multiple choice.'),
-  opts:[
-    {v:'ideation',l:t('Idéation / pré-création','Ideation / pre-incorporation')},
-    {v:'creation',l:t('Création / early stage','Incorporation / early stage')},
-    {v:'seed',l:'Seed'},
-    {v:'series_a',l:'Series A+'},
-    {v:'all',l:t('Tous stades','All stages')},
-  ]
-},
-
-// SECTION 2 — OBSERVED REALITY (no leading questions)
-{id:'q_common_challenges',type:'multi',
-  title:t('Dans votre expérience, quelles sont les difficultés les plus fréquentes que rencontrent les porteurs de projets que vous accompagnez ?','In your experience, what are the most common difficulties faced by the project holders you support?'),
-  sub:t('Choisissez tout ce qui correspond à ce que vous observez réellement.','Select everything that matches what you actually observe.'),
-  opts:[
-    {v:'product',l:t('Développement produit / technique','Product / technical development')},
-    {v:'market',l:t('Validation du marché','Market validation')},
-    {v:'team',l:t('Constitution de l\'équipe','Team building')},
-    {v:'funding',l:t('Accès au financement','Access to funding')},
-    {v:'legal',l:t('Aspects juridiques et administratifs','Legal and administrative aspects')},
-    {v:'network',l:t('Manque de réseau','Lack of network')},
-    {v:'mentorship',l:t('Accompagnement et mentorat','Mentorship and coaching')},
-    {v:'international',l:t('Expansion / internationalisation','Expansion / internationalisation')},
-    {v:'other',l:t('Autre','Other')},
-  ]
-},
-{id:'q_funding_stage',type:'radio',
-  title:t('D\'après votre observation, à quel moment les startups que vous accompagnez ont-elles le plus de mal à progresser ?','From your observation, at what point do the startups you support struggle the most to move forward?'),
-  opts:[
-    {v:'before_revenue',l:t('Avant les premiers revenus','Before first revenue')},
-    {v:'first_revenue',l:t('Lors des premiers revenus (0–10k€/mois)','During first revenue (€0–10k/month)')},
-    {v:'scaling',l:t('Lors du passage à l\'échelle','During scaling')},
-    {v:'international',l:t('Lors de l\'expansion internationale','During international expansion')},
-    {v:'varies',l:t('Très variable selon les projets','Highly variable')},
-  ]
-},
-{id:'q_dropout_reason',type:'radio',
-  title:t('Parmi les projets qui n\'arrivent pas à leur prochain stade, quelle est selon vous la raison principale ?','Among projects that don\'t reach their next stage, what do you observe as the main reason?'),
-  sub:t('Basé sur votre expérience directe, sans projection.','Based on your direct experience, without projection.'),
-  opts:[
-    {v:'product_fit',l:t('Produit ou marché pas encore validé','Product or market not yet validated')},
-    {v:'team',l:t('Problème d\'équipe ou de leadership','Team or leadership issue')},
-    {v:'capital',l:t('Manque de capital au bon moment','Lack of capital at the right time')},
-    {v:'execution',l:t('Problème d\'exécution','Execution problem')},
-    {v:'external',l:t('Facteurs externes (marché, timing…)','External factors (market, timing…)')},
-    {v:'combination',l:t('Combinaison de plusieurs facteurs','Combination of factors')},
-  ]
-},
-{id:'q_open_dropout',type:'text',textarea:true,optional:true,
-  title:t('Pouvez-vous décrire un cas typique que vous avez observé — sans nommer personne ?','Can you describe a typical case you\'ve observed — without naming anyone?'),
-  sub:t('Optionnel. Ces témoignages anonymisés sont les plus précieux pour notre étude.','Optional. These anonymised accounts are the most valuable for our study.'),
-  placeholder:t('ex. Un fondateur avait une offre solide mais n\'a pas pu…','e.g. A founder had a solid offer but couldn\'t…')
-},
-
-// SECTION 3 — FOREIGN / IMMIGRANT FOUNDERS (projective, not leading)
-{id:'q_foreign_proportion',type:'radio',
-  title:t('Quelle proportion de porteurs de projets que vous accompagnez est née à l\'étranger ou est issue de l\'immigration ?','What proportion of the project holders you support were born abroad or have an immigrant background?'),
-  opts:[
-    {v:'lt10',l:t('Moins de 10%','Less than 10%')},
-    {v:'10_30',l:'10% – 30%'},
-    {v:'30_50',l:'30% – 50%'},
-    {v:'gt50',l:t('Plus de 50%','More than 50%')},
-    {v:'no_data',l:t('Nous ne collectons pas cette donnée','We don\'t collect this data')},
-  ]
-},
-{id:'q_foreign_diff',type:'multi',
-  title:t('Observez-vous des différences dans le parcours des fondateurs étrangers ou immigrants par rapport aux fondateurs locaux ?','Do you observe differences in the journey of foreign or immigrant founders compared to local founders?'),
-  sub:t('Sélectionnez uniquement ce que vous avez réellement observé.','Select only what you have actually observed.'),
-  opts:[
-    {v:'no_diff',l:t('Non — je n\'observe pas de différence significative','No — I don\'t observe a significant difference')},
-    {v:'network',l:t('Réseau local moins développé','Less developed local network')},
-    {v:'banking',l:t('Accès aux services bancaires plus difficile','More difficult access to banking')},
-    {v:'admin',l:t('Démarches administratives plus complexes','More complex administrative procedures')},
-    {v:'language',l:t('Barrière de langue dans les démarches','Language barrier in procedures')},
-    {v:'trust',l:t('Difficulté à établir la confiance avec les partenaires locaux','Difficulty building trust with local partners')},
-    {v:'cultural',l:t('Différences culturelles dans la communication','Cultural differences in communication')},
-    {v:'faster',l:t('Paradoxalement, plus motivés et plus rapides','Paradoxically, more motivated and faster')},
-    {v:'other',l:t('Autre','Other')},
-  ]
-},
-{id:'q_foreign_funding',type:'radio',
-  title:t('En ce qui concerne spécifiquement l\'accès au financement, comment décririez-vous la situation des fondateurs étrangers dans votre programme ?','Specifically regarding access to financing, how would you describe the situation of foreign founders in your programme?'),
-  opts:[
-    {v:'same',l:t('Identique aux fondateurs locaux','Same as local founders')},
-    {v:'slightly_harder',l:t('Légèrement plus difficile','Slightly more difficult')},
-    {v:'harder',l:t('Nettement plus difficile','Noticeably more difficult')},
-    {v:'much_harder',l:t('Beaucoup plus difficile','Much more difficult')},
-    {v:'no_data',l:t('Je n\'ai pas assez de données pour répondre','I don\'t have enough data to answer')},
-  ]
-},
-{id:'q_existing_solutions',type:'multi',
-  title:t('Quelles solutions ou dispositifs existent déjà pour aider ces fondateurs dans votre écosystème ?','What solutions or programmes already exist to help these founders in your ecosystem?'),
-  sub:t('Plusieurs choix possibles.','Multiple choice.'),
-  opts:[
-    {v:'none',l:t('Aucun dispositif spécifique','No specific programme')},
-    {v:'mentoring',l:t('Mentorat dédié','Dedicated mentoring')},
-    {v:'grants',l:t('Aides spécifiques','Specific grants')},
-    {v:'networks',l:t('Réseaux diaspora / communautaires','Diaspora / community networks')},
-    {v:'incubation',l:t('Programmes d\'incubation dédiés','Dedicated incubation programmes')},
-    {v:'legal',l:t('Accompagnement juridique','Legal support')},
-    {v:'other',l:t('Autre','Other')},
-  ]
-},
-
-// SECTION 4 — PUBLIC FUNDING ECOSYSTEM (observational)
-{id:'q_grant_awareness',type:'radio',
-  title:t('Dans votre expérience, comment les porteurs de projets prennent-ils connaissance des aides publiques disponibles (BPI, French Tech, régions…) ?','In your experience, how do project holders typically learn about available public funding (BPI, French Tech, regions…)?'),
-  opts:[
-    {v:'organic',l:t('Par eux-mêmes / recherche personnelle','On their own / personal research')},
-    {v:'via_us',l:t('Via notre organisation','Via our organisation')},
-    {v:'network',l:t('Via leur réseau','Via their network')},
-    {v:'poorly',l:t('Souvent mal informés','Often poorly informed')},
-    {v:'varies',l:t('Très variable','Highly variable')},
-  ]
-},
-{id:'q_grant_success',type:'radio',
-  title:t('Parmi les startups que vous accompagnez et qui postulent à des aides publiques, quelle proportion obtient une réponse positive ?','Among startups you support that apply for public funding, what proportion receive a positive response?'),
-  opts:[
-    {v:'lt20',l:'< 20%'},
-    {v:'20_40',l:'20% – 40%'},
-    {v:'40_60',l:'40% – 60%'},
-    {v:'gt60',l:'> 60%'},
-    {v:'no_data',l:t('Pas de données','No data')},
-  ]
-},
-{id:'q_grant_gap',type:'radio',
-  title:t('Avez-vous observé des situations où une aide était accordée mais le porteur de projet n\'a pas pu en bénéficier concrètement ?','Have you observed situations where funding was granted but the project holder could not concretely benefit from it?'),
-  opts:[
-    {v:'never',l:t('Jamais','Never')},
-    {v:'rarely',l:t('Rarement (< 10% des cas)','Rarely (< 10% of cases)')},
-    {v:'sometimes',l:t('Parfois (10–30%)','Sometimes (10–30%)')},
-    {v:'often',l:t('Souvent (> 30%)','Often (> 30%)')},
-    {v:'no_data',l:t('Je n\'ai pas cette donnée','I don\'t have this data')},
-  ]
-},
-{id:'q_grant_gap_reason',type:'multi',conditional:{id:'q_grant_gap',val:['sometimes','often']},
-  title:t('Dans ces situations, quelles raisons avez-vous observées ?','In these situations, what reasons did you observe?'),
-  sub:t('Sélectionnez uniquement ce que vous avez directement constaté.','Select only what you directly observed.'),
-  opts:[
-    {v:'capital',l:t('Conditions de capital ou de cofinancement non remplies','Capital or co-financing conditions not met')},
-    {v:'admin',l:t('Dossier administratif incomplet ou retardé','Administrative file incomplete or delayed')},
-    {v:'timing',l:t('Décalage de calendrier','Timing mismatch')},
-    {v:'capacity',l:t('Capacité d\'absorption insuffisante','Insufficient absorption capacity')},
-    {v:'other',l:t('Autre raison','Other reason')},
-  ]
-},
-
-// SECTION 5 — MARKET PERCEPTION (projective)
-{id:'q_missing_solution',type:'text',textarea:true,
-  title:t('Si vous pouviez concevoir un service ou outil qui n\'existe pas encore pour les startups que vous accompagnez, à quoi ressemblerait-il ?','If you could design a service or tool that doesn\'t exist yet for the startups you support, what would it look like?'),
-  sub:t('Question ouverte — pas de bonne ou mauvaise réponse.','Open question — no right or wrong answer.'),
-  placeholder:t('ex. Un outil qui…','e.g. A tool that…')
-},
-{id:'q_collab_interest',type:'radio',
-  title:t('Dans quelle mesure seriez-vous ouvert(e) à collaborer avec une plateforme qui aide vos porteurs de projets à structurer un financement communautaire avant de postuler aux aides publiques ?','How open would you be to collaborating with a platform that helps your project holders structure community-based financing before applying for public funding?'),
-  opts:[
-    {v:'very',l:t('Très ouvert(e) — ça répond à un besoin réel','Very open — it addresses a real need')},
-    {v:'open',l:t('Ouvert(e) — à explorer','Open — worth exploring')},
-    {v:'neutral',l:t('Neutre — à évaluer au cas par cas','Neutral — case by case')},
-    {v:'skeptical',l:t('Sceptique — j\'aurais des questions','Sceptical — I\'d have questions')},
-    {v:'no',l:t('Pas intéressé(e)','Not interested')},
-  ]
-},
-{id:'q_collab_conditions',type:'text',textarea:true,optional:true,
-  title:t('Quelles conditions ou garanties vous sembleraient nécessaires pour une telle collaboration ?','What conditions or guarantees would seem necessary to you for such a collaboration?'),
-  placeholder:t('ex. Validation juridique, partenariat officiel, transparence des frais…','e.g. Legal validation, official partnership, fee transparency…'),
-  optional:true
-},
-
-// GOLDEN QUESTION
-{id:'q_golden',type:'text',textarea:true,
-  title:t('🏆 Selon vous, qu\'est-ce qui manque fondamentalement dans l\'écosystème de financement des startups early-stage aujourd\'hui ?','🏆 In your view, what is fundamentally missing in the early-stage startup financing ecosystem today?'),
-  sub:t('Votre perspective d\'expert est la plus précieuse de ce formulaire.','Your expert perspective is the most valuable part of this survey.'),
-  placeholder:t('Partagez librement votre analyse…','Share your analysis freely…')
-},
-
-// CONTACT
-{id:'q_contact',type:'contact',
-  title:t('Vos coordonnées','Your contact details'),
-  sub:t('Pour partager les résultats de l\'étude et éventuellement vous inviter à un atelier de co-construction.','To share study results and potentially invite you to a co-design workshop.')
-},
-{id:'thankyou',type:'thankyou'}
-];
-
-// ── ENGINE ──────────────────────────────────────────
-function renderAll(){
-  const c=document.getElementById('slides');c.innerHTML='';
-  questions.forEach((q,i)=>{
-    const d=document.createElement('div');
-    d.className='slide'+(i===0?' active':'');d.id='slide_'+i;
-    d.innerHTML=renderSlide(q,i);c.appendChild(d);
-  });
-  updateNav();
-}
-
-function renderSlide(q,i){
-  if(q.type==='welcome') return renderWelcome();
-  if(q.type==='thankyou') return renderThankyou();
-  if(q.type==='contact') return renderContact(q,i);
-  const vi=getVI(i),tv=getTV();
-  let h=`<div class="slide-inner"><div class="q-num">${vi} / ${tv}</div><div class="q-title">${q.title}</div>`;
-  if(q.sub) h+=`<div class="q-sub">${q.sub}</div>`;
-  if(q.note) h+=`<div class="q-note">${q.note}</div>`;
-  const K=['A','B','C','D','E','F','G','H','I'];
-  if(q.type==='radio'){
-    h+=`<div class="opts">`;
-    q.opts.forEach((o,x)=>h+=`<div class="opt" data-qid="${q.id}" data-val="${o.v}" onclick="pickOpt('${q.id}','${o.v}')"><div class="opt-key">${K[x]}</div><div class="opt-text">${o.l}${o.desc?`<div class="opt-desc">${o.desc}</div>`:''}</div></div>`);
-    h+=`</div><div class="req-err">Please select / Veuillez sélectionner.</div>`;
-  } else if(q.type==='multi'){
-    h+=`<div class="multi-hint">${t('Plusieurs choix','Multiple choice')}</div><div class="opts">`;
-    q.opts.forEach((o,x)=>h+=`<div class="opt" data-qid="${q.id}" data-val="${o.v}" onclick="pickMulti('${q.id}','${o.v}',this)"><div class="opt-key">${K[x]}</div><div class="opt-text">${o.l}</div></div>`);
-    h+=`</div><button class="ok-btn" onclick="nextQ()">OK ↵</button>`;
-  } else if(q.type==='text'){
-    if(q.textarea) h+=`<textarea class="tf-input" id="inp_${q.id}" placeholder="${q.placeholder||''}" rows="4" oninput="answers['${q.id}']=this.value"></textarea>`;
-    else h+=`<input class="tf-input" type="text" id="inp_${q.id}" placeholder="${q.placeholder||''}" oninput="answers['${q.id}']=this.value" onkeydown="if(event.key==='Enter')nextQ()"/>`;
-    h+=`<button class="ok-btn" onclick="nextQ()">OK ↵</button>`;
-    if(q.optional) h+=`<div class="ok-hint">${t('Optionnel','Optional')}</div>`;
-    else h+=`<div class="req-err">Please fill in / Veuillez remplir.</div>`;
-  } else if(q.type==='scale'){
-    h+=`<div class="scale-row" id="scale_${q.id}">`;
-    for(let n=1;n<=10;n++) h+=`<div class="scale-btn" onclick="pickScale('${q.id}',${n})">${n}</div>`;
-    h+=`</div><div class="scale-ends"><span>${q.min}</span><span>${q.max}</span></div><div class="req-err">Please select / Veuillez sélectionner.</div>`;
-  }
-  return h+'</div>';
-}
-
-function renderWelcome(){
-  return `<div class="slide-inner welcome-slide">
-    <div class="q-num" style="justify-content:center">Subinvest · ${t('Enquête Institutionnelle','Institutional Survey')}</div>
-    <div class="q-title">${t('Votre regard d\'expert sur l\'écosystème de financement early-stage','Your expert view on the early-stage financing ecosystem')}</div>
-    <div class="q-sub">${t('Cette étude de faisabilité recueille le point de vue des acteurs institutionnels — incubateurs, accélérateurs, universités, agences publiques. Durée : ~12 minutes.','This feasibility study gathers the perspective of institutional players — incubators, accelerators, universities, public agencies. Duration: ~12 minutes.')}</div>
-    <div class="stats">
-      <div class="stat"><div class="stat-v">~12</div><div class="stat-l">min</div></div>
-      <div class="stat"><div class="stat-v">🔒</div><div class="stat-l">${t('Confidentiel','Confidential')}</div></div>
-      <div class="stat"><div class="stat-v">📊</div><div class="stat-l">${t('Résultats partagés','Results shared')}</div></div>
-    </div>
-    <button class="start-btn" onclick="startSurvey()">${t('Commencer →','Start →')}</button>
-  </div>`;
-}
-
-function renderThankyou(){
-  return `<div class="slide-inner ty">
-    <div class="ty-icon">🎓</div>
-    <div class="ty-title">${t('Merci pour votre contribution !','Thank you for your contribution!')}</div>
-    <p class="ty-sub">${t('Votre expertise contribue directement à cette étude de faisabilité. Nous partagerons les résultats consolidés avec tous les participants.','Your expertise directly contributes to this feasibility study. We will share consolidated results with all participants.')}</p>
-    <div class="share-row">
-      <button class="share-btn" onclick="shareLinkedIn()">🔗 LinkedIn</button>
-      <button class="share-btn" onclick="shareWhatsApp()">💬 WhatsApp</button>
-    </div>
-  </div>`;
-}
-
-function renderContact(q,i){
-  const vi=getVI(i),tv=getTV();
-  return `<div class="slide-inner">
-    <div class="q-num">${vi} / ${tv}</div>
-    <div class="q-title">${q.title}</div>
-    <div class="q-sub">${q.sub}</div>
-    <div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
-      <div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">${t('Prénom & Nom *','Full name *')}</div>
-        <input class="tf-input" type="text" id="c_name" placeholder="${t('Dr. Marie Dupont','Dr. Marie Dupont')}" style="font-size:16px" oninput="answers.c_name=this.value"/></div>
-      <div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">${t('Fonction / Poste','Role / Position')}</div>
-        <input class="tf-input" type="text" id="c_role" placeholder="${t('ex. Directeur programme, Chargé de mission…','e.g. Programme Director, Mission Officer…')}" style="font-size:16px" oninput="answers.c_role=this.value"/></div>
-      <div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">${t('Email *','Email *')}</div>
-        <input class="tf-input" type="email" id="c_email" placeholder="marie@organisation.fr" style="font-size:16px" oninput="answers.c_email=this.value"/></div>
-      <div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">LinkedIn</div>
-        <input class="tf-input" type="text" id="c_linkedin" placeholder="linkedin.com/in/..." style="font-size:16px" oninput="answers.c_linkedin=this.value"/></div>
-      <div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">${t('Disponible pour un entretien approfondi ?','Available for an in-depth interview?')}</div>
-        <div class="opts" style="flex-direction:row;flex-wrap:wrap">
-          ${[['yes','Oui / Yes'],['maybe',t('Peut-être','Maybe')],['no','Non / No']].map(([v,l],idx)=>`
-            <div class="opt" style="flex:1;min-width:100px" onclick="this.parentNode.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));this.classList.add('sel');answers.c_interview='${v}'">
-              <div class="opt-key">${['A','B','C'][idx]}</div>
-              <div class="opt-text" style="font-size:13px">${l}</div>
-            </div>`).join('')}
-        </div>
-      </div>
-    </div>
-    <button class="ok-btn" onclick="submitForm()" id="submitBtn">${t('Envoyer →','Submit →')}</button>
-    <div class="req-err" id="contact-err">${t('Veuillez renseigner votre nom et email.','Please fill in your name and email.')}</div>
-  </div>`;
-}
-
-function getVQ(){return questions.map((q,i)=>({q,i})).filter(({q})=>{
-  if(q.type==='welcome'||q.type==='thankyou') return false;
-  if(q.conditional){const d=answers[q.conditional.id];const v=Array.isArray(q.conditional.val)?q.conditional.val:[q.conditional.val];return v.includes(d)}
-  return true;
-})}
-function getVI(si){const v=getVQ();const i=v.findIndex(x=>x.i===si);return i>=0?i+1:'—'}
-function getTV(){return getVQ().length}
-
-function startSurvey(){started=true;document.getElementById('bottomNav').style.display='flex';goTo(1)}
-
-function goTo(idx){
-  const sl=document.querySelectorAll('.slide');
-  sl[current].classList.remove('active');sl[current].classList.add('exit-up');
-  setTimeout(()=>sl[current].classList.remove('exit-up'),450);
-  current=idx;sl[current].classList.add('active');
-  updateNav();updateProg();
-  setTimeout(()=>{const inp=sl[current].querySelector('input,textarea');if(inp)inp.focus()},500);
-}
-
-function nextQ(){
-  const q=questions[current];
-  if(q.type==='radio'&&!answers[q.id]&&!q.optional){document.querySelector('#slide_'+current+' .req-err').style.display='block';return}
-  if(q.type==='text'&&!q.optional){const v=document.getElementById('inp_'+q.id)?.value?.trim();if(!v){document.querySelector('#slide_'+current+' .req-err').style.display='block';return}}
-  let next=current+1;
-  while(next<questions.length-1){
-    const nq=questions[next];
-    if(nq.conditional){const d=answers[nq.conditional.id];const v=Array.isArray(nq.conditional.val)?nq.conditional.val:[nq.conditional.val];if(!v.includes(d)){next++;continue}}
-    break;
-  }
-  if(next<questions.length) goTo(next);
-}
-
-function prevQ(){
-  if(current<=1)return;
-  let prev=current-1;
-  while(prev>0){const pq=questions[prev];if(pq.conditional){const d=answers[pq.conditional.id];const v=Array.isArray(pq.conditional.val)?pq.conditional.val:[pq.conditional.val];if(!v.includes(d)){prev--;continue}}break;}
-  const sl=document.querySelectorAll('.slide');sl[current].classList.remove('active');current=prev;sl[current].classList.add('active');updateNav();updateProg();
-}
-
-function updateNav(){
-  document.getElementById('btnUp').disabled=current<=1;
-  document.getElementById('btnDown').disabled=current>=questions.length-1;
-  const v=getVQ();const i=v.findIndex(x=>x.i===current);
-  document.getElementById('navCounter').textContent=i>=0?`${i+1} / ${v.length}`:'';
-}
-function updateProg(){
-  const v=getVQ();const i=v.findIndex(x=>x.i===current);
-  document.getElementById('pf').style.width=(v.length>0&&i>=0?Math.round(((i+1)/v.length)*100):0)+'%';
-}
-
-function pickOpt(qid,val){
-  answers[qid]=val;
-  const slide=questions.findIndex(q=>q.id===qid);
-  document.querySelectorAll('#slide_'+slide+' .opt[data-qid="'+qid+'"]').forEach(o=>o.classList.toggle('sel',o.dataset.val===val));
-  const err=document.querySelector('#slide_'+slide+' .req-err');if(err)err.style.display='none';
-  setTimeout(()=>nextQ(),300);
-}
-function pickMulti(qid,val,el){
-  if(!answers[qid])answers[qid]=[];
-  const i=answers[qid].indexOf(val);if(i>=0)answers[qid].splice(i,1);else answers[qid].push(val);
-  el.classList.toggle('sel',answers[qid].includes(val));
-}
-function pickScale(qid,val){
-  answers[qid]=val;
-  document.querySelectorAll('#scale_'+qid+' .scale-btn').forEach((b,i)=>b.classList.toggle('sel',i+1===val));
-  setTimeout(()=>nextQ(),350);
-}
-
-document.addEventListener('keydown',e=>{
-  if(!started)return;
-  const q=questions[current];
-  if(e.key==='Enter'&&q.type!=='radio'&&q.type!=='scale')nextQ();
-  if(e.key==='ArrowDown')nextQ();if(e.key==='ArrowUp')prevQ();
-  if(q.type==='radio'||q.type==='multi'){
-    const K=['a','b','c','d','e','f','g','h','i'];const idx=K.indexOf(e.key.toLowerCase());
-    if(idx>=0&&q.opts&&q.opts[idx]){if(q.type==='radio')pickOpt(q.id,q.opts[idx].v);else{const el=document.querySelector('#slide_'+current+' .opt[data-val="'+q.opts[idx].v+'"]');if(el)pickMulti(q.id,q.opts[idx].v,el)}}
-  }
+const answers={};
+document.querySelectorAll('.opts').forEach(group=>{
+ const type=group.dataset.type,key=group.dataset.key;
+ if(!key) return;
+ group.querySelectorAll('.opt').forEach(opt=>{
+ opt.addEventListener('click',()=>{
+ if(type==='radio'){
+ group.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+ opt.classList.add('sel');answers[key]=opt.dataset.v;
+ } else {
+ opt.classList.toggle('sel');
+ if(!answers[key])answers[key]=[];
+ const v=opt.dataset.v,i=answers[key].indexOf(v);
+ if(i>=0)answers[key].splice(i,1);else answers[key].push(v);
+ }
+ document.getElementById(key)?.classList.remove('has-error');
+ updateProgress();
+ });
+ });
 });
-
+function save(el){answers[el.dataset.key]=el.value;updateProgress()}
+function updateProgress(){
+ const req=['q_org_type','q_challenges','q_foreign_funding','q_grant_gap','q_golden'];
+ const filled=req.filter(k=>answers[k]&&(Array.isArray(answers[k])?answers[k].length>0:answers[k]!=='')).length;
+ document.getElementById('pf').style.width=Math.round((filled/req.length)*100)+'%';
+}
+function validate(){
+ const req={'q_org_type':'radio','q_challenges':'multi','q_foreign_funding':'radio','q_grant_gap':'radio','q_golden':'text'};
+ let ok=true;
+ Object.entries(req).forEach(([k,type])=>{
+ const card=document.getElementById(k);let filled=false;
+ if(type==='radio')filled=!!answers[k];
+ else if(type==='multi')filled=answers[k]&&answers[k].length>0;
+ else if(type==='text')filled=answers[k]&&answers[k].trim().length>0;
+ if(!filled){card.classList.add('has-error');if(ok){card.scrollIntoView({behavior:'smooth',block:'center'});ok=false;}}
+ else card.classList.remove('has-error');
+ });
+ return ok;
+}
 async function submitForm(){
-    const btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent=t('Envoi…','Sending…');
-  const payload={};
-  payload['_subject']=(`[Subinvest Institutional] ${answers.q_org_name||answers.c_name}`);
-  payload['_replyto']=(answers.c_email);
-  payload['Organisation type']=(answers.q_org_type||'—');
-  payload['Organisation name']=(answers.q_org_name||'—');
-  payload['Location']=(answers.q_country||'—');
-  payload['Startups per year']=(answers.q_startups_per_year||'—');
-  payload['Stage focus']=((answers.q_stage_focus||[]).join(', ')||'—');
-  payload['Common challenges']=((answers.q_common_challenges||[]).join(', ')||'—');
-  payload['Struggle point']=(answers.q_funding_stage||'—');
-  payload['Main dropout reason']=(answers.q_dropout_reason||'—');
-  payload['Typical case (anon)']=(answers.q_open_dropout||'—');
-  payload['Foreign founder proportion']=(answers.q_foreign_proportion||'—');
-  payload['Observed differences']=((answers.q_foreign_diff||[]).join(', ')||'—');
-  payload['Foreign funding access']=(answers.q_foreign_funding||'—');
-  payload['Existing solutions']=((answers.q_existing_solutions||[]).join(', ')||'—');
-  payload['Grant awareness channel']=(answers.q_grant_awareness||'—');
-  payload['Grant success rate']=(answers.q_grant_success||'—');
-  payload['Observed grant gap']=(answers.q_grant_gap||'—');
-  payload['Grant gap reasons']=((answers.q_grant_gap_reason||[]).join(', ')||'—');
-  payload['Missing solution (open)']=(answers.q_missing_solution||'—');
-  payload['Collaboration interest']=(answers.q_collab_interest||'—');
-  payload['Collaboration conditions']=(answers.q_collab_conditions||'—');
-  payload['🏆 What is fundamentally missing']=(answers.q_golden||'—');
-  payload['Name']=(answers.c_name);payload['Role']=(answers.c_role||'—');
-  payload['Email']=(answers.c_email);payload['LinkedIn']=(answers.c_linkedin||'—');
-  payload['Interview available']=(answers.c_interview||'—');
-  payload['Language']=(lang);
-  payload['Submitted at']=(new Date().toLocaleString('en-GB',{timeZone:'Europe/Paris'}));
-  try{
-    const res=await fetch('https://formspree.io/f/maqzldbg',{method:'POST',body:JSON.stringify(payload),headers:{'Accept':'application/json','Content-Type':'application/json'}});
-    if(res.ok)goTo(questions.length-1);else throw new Error();
-  }catch{btn.disabled=false;btn.textContent='⚠️ Error — retry'}
+ if(!validate())return;
+ const btn=document.getElementById('submitBtn');
+ btn.disabled=true;btn.textContent='Sending...';
+ const payload={
+ '_subject':'[Subinvest Institutional] '+(answers.q_org_name||answers.c_name||'Anonymous'),
+ 'Org_type':answers.q_org_type||'-','Org_name':answers.q_org_name||'-',
+ 'Location':answers.q_country||'-','Startups_per_year':answers.q_startups_yr||'-',
+ 'Common_challenges':(answers.q_challenges||[]).join(', ')||'-',
+ 'Dropout_reason':answers.q_dropout_reason||'-','Open_case':answers.q_open_case||'-',
+ 'Foreign_proportion':answers.q_foreign_prop||'-',
+ 'Foreign_differences':(answers.q_foreign_diff||[]).join(', ')||'-',
+ 'Foreign_funding_access':answers.q_foreign_funding||'-',
+ 'Grant_gap_observed':answers.q_grant_gap||'-',
+ 'Grant_gap_reasons':(answers.q_grant_gap_reason||[]).join(', ')||'-',
+ 'Missing_solution':answers.q_missing_solution||'-',
+ 'Collab_interest':answers.q_collab||'-',
+ 'Golden_answer':answers.q_golden||'-',
+ 'Name':answers.c_name||'-','Role':answers.c_role||'-',
+ 'Email':answers.c_email||'-','LinkedIn':answers.c_linkedin||'-',
+ 'Interview':answers.c_interview||'-','Language':'en',
+ 'Submitted_at':new Date().toLocaleString('en-GB',{timeZone:'Europe/Paris'})
+ };
+ if(answers.c_email)payload['_replyto']=answers.c_email;
+ try{
+ const res=await fetch('https://formspree.io/f/maqzldbg',{method:'POST',body:JSON.stringify(payload),headers:{'Accept':'application/json','Content-Type':'application/json'}});
+ const data=await res.json();
+ if(res.ok&&!data.errors){
+ document.getElementById('formMain').style.display='none';
+ document.getElementById('thankyou').style.display='block';
+ window.scrollTo({top:0,behavior:'smooth'});
+ } else {btn.disabled=false;btn.textContent='Error - retry';console.error(data);}
+ } catch(e){btn.disabled=false;btn.textContent='Network error - retry';console.error(e);}
 }
 
-function setLang(l){
-  lang=l;
-  document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',b.textContent.toLowerCase().includes(l)));
-  const savedCurrent=current;
-  const savedAnswers=JSON.parse(JSON.stringify(answers));
-  renderAll();
-  current=savedCurrent;
-  answers=savedAnswers;
-  document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===current));
-  updateNav();updateProg();
-  if(started)document.getElementById('bottomNav').style.display='flex';
-  Object.keys(answers).forEach(qid=>{
-    const val=answers[qid];
-    const slide=questions.findIndex(q=>q.id===qid);
-    if(slide<0)return;
-    if(Array.isArray(val)){
-      val.forEach(v=>{const el=document.querySelector('#slide_'+slide+' .opt[data-val="'+v+'"]');if(el)el.classList.add('sel');});
-    } else {
-      const el=document.querySelector('#slide_'+slide+' .opt[data-val="'+val+'"]');
-      if(el)el.classList.add('sel');
-    }
-  });
-}
-function shareLinkedIn(){window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(location.href)}`,'_blank')}
-function shareWhatsApp(){window.open(`https://wa.me/?text=${encodeURIComponent(t('🎓 Subinvest — Enquête institutionnelle sur le financement early-stage\n','🎓 Subinvest — Institutional survey on early-stage financing\n')+location.href)}`,'_blank')}
-
-renderAll();
+function shareLinkedIn(){window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(location.href),'_blank')}
+function shareWhatsApp(){window.open('https://wa.me/?text='+encodeURIComponent(('Subinvest institutional survey: ')+location.href),'_blank')}
+updateProgress();
 </script>
 </body>
 </html>
