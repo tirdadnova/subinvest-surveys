@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Subinvest — Institutional Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#F8F6F1;--white:#FFFFFF;--ink:#1A1916;--ink2:#4A4845;--line:#E2DED6;--accent:#1A3A6B;--accent-bg:#EBF0F9;--gold:#A0722A;--gold-bg:#FAF3E6;--red:#C0392B;--r:8px;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;min-height:100vh}
+.topbar{background:var(--accent);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{font-family:'Instrument Serif',serif;font-size:18px;color:#fff}
+
+
+
+.hero{background:var(--accent);padding:40px 24px 48px;color:#fff}
+.hero-tag{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.6;margin-bottom:12px;font-weight:500}
+.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(26px,4.5vw,40px);line-height:1.1;margin-bottom:12px;max-width:600px}
+.hero h1 em{font-style:italic;opacity:.8}
+.hero-sub{font-size:14px;opacity:.72;max-width:500px;line-height:1.75;margin-bottom:28px}
+.hero-meta{display:flex;gap:20px;flex-wrap:wrap}
+.hm{font-size:12px;opacity:.55}
+.progress-bar{height:3px;background:rgba(255,255,255,.15)}
+.progress-fill{height:100%;background:#fff;transition:width .4s ease;width:0%}
+.main{max-width:680px;margin:0 auto;padding:40px 20px 80px}
+.section-label{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-top:32px}
+.section-label:first-child{padding-top:0}
+.sl-letter{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sl-text{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink2)}
+.qcard{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:10px;transition:border-color .15s}
+.qcard:focus-within{border-color:var(--accent)}
+.qcard.has-error{border-color:var(--red)}
+.ql{font-size:14px;font-weight:500;margin-bottom:4px;line-height:1.5}
+.qs{font-size:12px;color:var(--ink2);margin-bottom:14px;line-height:1.6}
+.qnote{display:inline-block;font-size:11px;color:var(--gold);background:var(--gold-bg);padding:4px 10px;border-radius:5px;margin-bottom:12px;font-weight:500}
+.req{color:var(--red)}
+.err{font-size:11px;color:var(--red);margin-top:6px;display:none}
+.qcard.has-error .err{display:block}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--line);border-radius:6px;cursor:pointer;transition:all .15s;background:var(--bg);font-size:13px;color:var(--ink);user-select:none}
+.opt:hover{border-color:var(--accent);background:var(--accent-bg)}
+.opt.sel{border-color:var(--accent);background:var(--accent-bg);color:var(--accent);font-weight:500}
+.opt-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.opt.sel .opt-dot{border-color:var(--accent);background:var(--accent)}
+.opt.sel .opt-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.opt-sq{width:16px;height:16px;border-radius:4px;border:2px solid var(--line);flex-shrink:0;transition:all .15s}
+.opt.sel .opt-sq{border-color:var(--accent);background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='8'%3E%3Cpath fill='%23fff' stroke='%23fff' stroke-width='1' d='M1 4l3 3 5-6'/%3E%3C/svg%3E") center/10px no-repeat}
+.opt-lbl{flex:1;line-height:1.4}
+.multi-note{font-size:11px;color:var(--ink2);margin-bottom:8px;font-style:italic}
+input[type=text],input[type=email],select,textarea{width:100%;border:1px solid var(--line);border-radius:6px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:#fff;outline:none;transition:border .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:88px;line-height:1.6}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%234A4845' d='M5 6L0 0h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.field-lbl{font-size:12px;font-weight:500;color:var(--ink2);margin-bottom:5px;display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.grid2{grid-template-columns:1fr}}
+.divider{height:1px;background:var(--line);margin:8px 0 0}
+.submit-area{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:28px;margin-top:24px;text-align:center}
+.submit-area h3{font-family:'Instrument Serif',serif;font-size:22px;margin-bottom:6px}
+.submit-area p{font-size:13px;color:var(--ink2);margin-bottom:20px;line-height:1.6}
+.btn-submit{background:var(--accent);color:#fff;border:none;padding:13px 40px;border-radius:6px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;cursor:pointer;min-width:200px}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed}
+#thankyou{display:none;text-align:center;padding:60px 20px;max-width:500px;margin:0 auto}
+.ty-icon{font-size:48px;margin-bottom:16px}
+.ty-h{font-family:'Instrument Serif',serif;font-size:32px;color:var(--accent);margin-bottom:10px}
+.ty-p{font-size:14px;color:var(--ink2);line-height:1.8;margin-bottom:24px}
+.share-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.share-btn{padding:9px 20px;border-radius:6px;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;font-family:'Inter',sans-serif;font-weight:500}
+
+</style>
+</head>
+<body>
+<div class="topbar">
+ <div class="logo">Subinvest</div>
+ 
+</div>
+<div class="hero">
+ <div class="hero-tag">Institutional Survey</div>
+ <h1>Your expert view on <em>the financing ecosystem</em></h1>
+ <p class="hero-sub">This feasibility study gathers perspectives from institutional players — incubators, accelerators, universities, public agencies. ~12 minutes.</p>
+ <div class="hero-meta"><span class="hm">⏱ ~12 min</span><span class="hm">🔒 Confidential</span><span class="hm">📊 Results shared</span></div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="pf"></div></div>
+
+<div class="main" id="formMain">
+
+<div class="section-label"><div class="sl-letter">A</div><div class="sl-text">Your organisation</div></div>
+
+<div class="qcard" id="q_org_type">
+ <div class="ql">What best describes your organisation? <span class="req">*</span></div>
+ <div class="opts" data-type="radio" data-key="q_org_type">
+ <div class="opt" data-v="incubator"><div class="opt-dot"></div><div class="opt-lbl">Incubator</div></div>
+ <div class="opt" data-v="accelerator"><div class="opt-dot"></div><div class="opt-lbl">Accelerator</div></div>
+ <div class="opt" data-v="university"><div class="opt-dot"></div><div class="opt-lbl">University / Grande école</div></div>
+ <div class="opt" data-v="public_agency"><div class="opt-dot"></div><div class="opt-lbl">Public agency (BPI, French Tech…)</div></div>
+ <div class="opt" data-v="chamber"><div class="opt-dot"></div><div class="opt-lbl">Chamber of commerce / CCI</div></div>
+ <div class="opt" data-v="foundation"><div class="opt-dot"></div><div class="opt-lbl">Foundation / Association</div></div>
+ <div class="opt" data-v="other"><div class="opt-dot"></div><div class="opt-lbl">Other</div></div>
+ </div>
+ <div class="err">Please select an option.</div>
+</div>
+
+<div class="qcard">
+ <div class="ql">Organisation name and city</div>
+ <div class="grid2" style="margin-top:8px">
+ <div><input type="text" data-key="q_org_name" placeholder="Station F, ESSEC..." oninput="save(this)"/></div>
+ <div><input type="text" data-key="q_country" placeholder="Paris, France" oninput="save(this)"/></div>
+ </div>
+</div>
+
+<div class="qcard" id="q_startups_yr">
+ <div class="ql">How many startups do you support per year?</div>
+ <div class="opts" data-type="radio" data-key="q_startups_yr">
+ <div class="opt" data-v="lt10"><div class="opt-dot"></div><div class="opt-lbl">&lt; 10</div></div>
+ <div class="opt" data-v="10_50"><div class="opt-dot"></div><div class="opt-lbl">10 – 50</div></div>
+ <div class="opt" data-v="50_200"><div class="opt-dot"></div><div class="opt-lbl">50 – 200</div></div>
+ <div class="opt" data-v="gt200"><div class="opt-dot"></div><div class="opt-lbl">&gt; 200</div></div>
+ </div>
+</div>
+
+<div class="divider"></div>
+<div class="section-label"><div class="sl-letter">B</div><div class="sl-text">What you observe</div></div>
+
+<div class="qcard" id="q_challenges">
+ <div class="ql">What are the most common difficulties among the project holders you support? <span class="req">*</span></div>
+ <div class="qs">Select only what you actually observe.</div>
+ <div class="multi-note">Multiple choice</div>
+ <div class="opts" data-type="multi" data-key="q_challenges">
+ <div class="opt" data-v="product"><div class="opt-sq"></div><div class="opt-lbl">Product / technical development</div></div>
+ <div class="opt" data-v="market"><div class="opt-sq"></div><div class="opt-lbl">Market validation</div></div>
+ <div class="opt" data-v="team"><div class="opt-sq"></div><div class="opt-lbl">Team building</div></div>
+ <div class="opt" data-v="funding"><div class="opt-sq"></div><div class="opt-lbl">Access to funding</div></div>
+ <div class="opt" data-v="legal"><div class="opt-sq"></div><div class="opt-lbl">Legal and administrative aspects</div></div>
+ <div class="opt" data-v="network"><div class="opt-sq"></div><div class="opt-lbl">Lack of network</div></div>
+ <div class="opt" data-v="mentorship"><div class="opt-sq"></div><div class="opt-lbl">Mentorship and coaching</div></div>
+ <div class="opt" data-v="other"><div class="opt-sq"></div><div class="opt-lbl">Other</div></div>
+ </div>
+ <div class="err">Please select at least one option.</div>
+</div>
+
+<div class="qcard" id="q_dropout_reason">
+ <div class="ql">Among projects that don't reach their next stage, what do you observe as the main reason?</div>
+ <div class="opts" data-type="radio" data-key="q_dropout_reason">
+ <div class="opt" data-v="product_fit"><div class="opt-dot"></div><div class="opt-lbl">Product or market not yet validated</div></div>
+ <div class="opt" data-v="team"><div class="opt-dot"></div><div class="opt-lbl">Team or leadership issue</div></div>
+ <div class="opt" data-v="capital"><div class="opt-dot"></div><div class="opt-lbl">Lack of capital at the right time</div></div>
+ <div class="opt" data-v="execution"><div class="opt-dot"></div><div class="opt-lbl">Execution problem</div></div>
+ <div class="opt" data-v="external"><div class="opt-dot"></div><div class="opt-lbl">External factors</div></div>
+ <div class="opt" data-v="combination"><div class="opt-dot"></div><div class="opt-lbl">Combination of factors</div></div>
+ </div>
+</div>
+
+<div class="qcard">
+ <div class="ql">Can you describe a typical case you've observed — without naming anyone?</div>
+ <div class="qs">Optional. These anonymised accounts are very valuable.</div>
+ <textarea data-key="q_open_case" placeholder="" oninput="save(this)"></textarea>
+</div>
+
+<div class="divider"></div>
+<div class="section-label"><div class="sl-letter">C</div><div class="sl-text">Foreign & immigrant founders</div></div>
+
+<div class="qcard" id="q_foreign_prop">
+ <div class="ql">What proportion of project holders were born abroad or have an immigrant background?</div>
+ <div class="opts" data-type="radio" data-key="q_foreign_prop">
+ <div class="opt" data-v="lt10"><div class="opt-dot"></div><div class="opt-lbl">&lt; 10%</div></div>
+ <div class="opt" data-v="10_30"><div class="opt-dot"></div><div class="opt-lbl">10% – 30%</div></div>
+ <div class="opt" data-v="30_50"><div class="opt-dot"></div><div class="opt-lbl">30% – 50%</div></div>
+ <div class="opt" data-v="gt50"><div class="opt-dot"></div><div class="opt-lbl">&gt; 50%</div></div>
+ <div class="opt" data-v="no_data"><div class="opt-dot"></div><div class="opt-lbl">We don't collect this data</div></div>
+ </div>
+</div>
+
+<div class="qcard" id="q_foreign_diff">
+ <div class="ql">Do you observe differences in the journey of foreign founders?</div>
+ <div class="multi-note">Select only what you have actually observed</div>
+ <div class="opts" data-type="multi" data-key="q_foreign_diff">
+ <div class="opt" data-v="no_diff"><div class="opt-sq"></div><div class="opt-lbl">No — no significant difference</div></div>
+ <div class="opt" data-v="network"><div class="opt-sq"></div><div class="opt-lbl">Less developed local network</div></div>
+ <div class="opt" data-v="banking"><div class="opt-sq"></div><div class="opt-lbl">More difficult banking access</div></div>
+ <div class="opt" data-v="admin"><div class="opt-sq"></div><div class="opt-lbl">More complex administrative procedures</div></div>
+ <div class="opt" data-v="trust"><div class="opt-sq"></div><div class="opt-lbl">Difficulty building trust with local partners</div></div>
+ <div class="opt" data-v="faster"><div class="opt-sq"></div><div class="opt-lbl">Paradoxically more motivated and faster</div></div>
+ <div class="opt" data-v="other"><div class="opt-sq"></div><div class="opt-lbl">Other</div></div>
+ </div>
+</div>
+
+<div class="qcard" id="q_foreign_funding">
+ <div class="ql">How would you describe foreign founders' access to financing in your programme? <span class="req">*</span></div>
+ <div class="opts" data-type="radio" data-key="q_foreign_funding">
+ <div class="opt" data-v="same"><div class="opt-dot"></div><div class="opt-lbl">Same as local founders</div></div>
+ <div class="opt" data-v="slightly_harder"><div class="opt-dot"></div><div class="opt-lbl">Slightly more difficult</div></div>
+ <div class="opt" data-v="harder"><div class="opt-dot"></div><div class="opt-lbl">Noticeably more difficult</div></div>
+ <div class="opt" data-v="much_harder"><div class="opt-dot"></div><div class="opt-lbl">Much more difficult</div></div>
+ <div class="opt" data-v="no_data"><div class="opt-dot"></div><div class="opt-lbl">Not enough data to answer</div></div>
+ </div>
+ <div class="err">Please select an option.</div>
+</div>
+
+<div class="divider"></div>
+<div class="section-label"><div class="sl-letter">D</div><div class="sl-text">Public funding</div></div>
+
+<div class="qcard" id="q_grant_gap">
+ <div class="ql">Have you observed situations where funding was granted but the project holder couldn't benefit from it? <span class="req">*</span></div>
+ <div class="opts" data-type="radio" data-key="q_grant_gap">
+ <div class="opt" data-v="never"><div class="opt-dot"></div><div class="opt-lbl">Never</div></div>
+ <div class="opt" data-v="rarely"><div class="opt-dot"></div><div class="opt-lbl">Rarely (&lt; 10% of cases)</div></div>
+ <div class="opt" data-v="sometimes"><div class="opt-dot"></div><div class="opt-lbl">Sometimes (10 – 30%)</div></div>
+ <div class="opt" data-v="often"><div class="opt-dot"></div><div class="opt-lbl">Often (&gt; 30%)</div></div>
+ <div class="opt" data-v="no_data"><div class="opt-dot"></div><div class="opt-lbl">I don't have this data</div></div>
+ </div>
+ <div class="err">Please select an option.</div>
+</div>
+
+<div class="qcard">
+ <div class="ql">If yes, what reasons did you observe?</div>
+ <div class="multi-note">Multiple choice</div>
+ <div class="opts" data-type="multi" data-key="q_grant_gap_reason">
+ <div class="opt" data-v="capital"><div class="opt-sq"></div><div class="opt-lbl">Capital conditions not met</div></div>
+ <div class="opt" data-v="admin"><div class="opt-sq"></div><div class="opt-lbl">Incomplete administrative file</div></div>
+ <div class="opt" data-v="timing"><div class="opt-sq"></div><div class="opt-lbl">Timing mismatch</div></div>
+ <div class="opt" data-v="capacity"><div class="opt-sq"></div><div class="opt-lbl">Insufficient absorption capacity</div></div>
+ <div class="opt" data-v="other"><div class="opt-sq"></div><div class="opt-lbl">Other</div></div>
+ </div>
+</div>
+
+<div class="divider"></div>
+<div class="section-label"><div class="sl-letter">E</div><div class="sl-text">Open questions</div></div>
+
+<div class="qcard">
+ <div class="ql">If you could design a service that doesn't exist yet for the startups you support, what would it look like?</div>
+ <textarea data-key="q_missing_solution" placeholder="" oninput="save(this)"></textarea>
+</div>
+
+<div class="qcard" id="q_collab">
+ <div class="ql">How open would you be to collaborating with a platform helping your project holders structure community-based financing before applying for public funding?</div>
+ <div class="opts" data-type="radio" data-key="q_collab">
+ <div class="opt" data-v="very"><div class="opt-dot"></div><div class="opt-lbl">Very open — it addresses a real need</div></div>
+ <div class="opt" data-v="open"><div class="opt-dot"></div><div class="opt-lbl">Open — worth exploring</div></div>
+ <div class="opt" data-v="neutral"><div class="opt-dot"></div><div class="opt-lbl">Neutral</div></div>
+ <div class="opt" data-v="skeptical"><div class="opt-dot"></div><div class="opt-lbl">Sceptical</div></div>
+ <div class="opt" data-v="no"><div class="opt-dot"></div><div class="opt-lbl">Not interested</div></div>
+ </div>
+</div>
+
+<div class="qcard" id="q_golden">
+ <div class="ql">🏆 In your view, what is fundamentally missing in the early-stage startup financing ecosystem? <span class="req">*</span></div>
+ <textarea data-key="q_golden" placeholder="" oninput="save(this)"></textarea>
+ <div class="err">Please answer this question.</div>
+</div>
+
+<div class="divider"></div>
+<div class="section-label"><div class="sl-letter">F</div><div class="sl-text">Contact details</div></div>
+
+<div class="qcard">
+ <div class="ql">To share results and invite you to a co-design workshop</div>
+ <div class="qs">Everything is optional.</div>
+ <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
+ <div class="grid2">
+ <div><label class="field-lbl">Full name</label><input type="text" data-key="c_name" placeholder="Dr. Marie Dupont" oninput="save(this)"/></div>
+ <div><label class="field-lbl">Role</label><input type="text" data-key="c_role" placeholder="e.g. Programme Director..." oninput="save(this)"/></div>
+ </div>
+ <div class="grid2">
+ <div><label class="field-lbl">Email</label><input type="email" data-key="c_email" placeholder="marie@organisation.com" oninput="save(this)"/></div>
+ <div><label class="field-lbl">LinkedIn</label><input type="text" data-key="c_linkedin" placeholder="linkedin.com/in/..." oninput="save(this)"/></div>
+ </div>
+ <div>
+ <label class="field-lbl">Available for an in-depth interview?</label>
+ <div class="opts" data-type="radio" data-key="c_interview" style="flex-direction:row;flex-wrap:wrap">
+ <div class="opt" data-v="yes" style="flex:1;min-width:120px"><div class="opt-dot"></div><div class="opt-lbl" style="font-size:12px">Yes</div></div>
+ <div class="opt" data-v="maybe" style="flex:1;min-width:120px"><div class="opt-dot"></div><div class="opt-lbl" style="font-size:12px">Maybe</div></div>
+ <div class="opt" data-v="no" style="flex:1;min-width:120px"><div class="opt-dot"></div><div class="opt-lbl" style="font-size:12px">No</div></div>
+ </div>
+ </div>
+ </div>
+</div>
+
+<div class="submit-area">
+ <h3>Thank you for your contribution 🎓</h3>
+ <p>Your expertise directly contributes to this feasibility study.</p>
+ <button class="btn-submit" id="submitBtn" onclick="submitForm()">Submit my answers</button>
+</div>
+</div>
+
+<div id="thankyou">
+ <div class="ty-icon">🎓</div>
+ <div class="ty-h">Thank you!</div>
+ <p class="ty-p">Your contribution is invaluable. We will share consolidated results.</p>
+ <div class="share-row">
+ <button class="share-btn" onclick="shareLinkedIn()">🔗 LinkedIn</button>
+ <button class="share-btn" onclick="shareWhatsApp()">💬 WhatsApp</button>
+ </div>
+</div>
+
+<script>
+
+const answers={};
+document.querySelectorAll('.opts').forEach(group=>{
+ const type=group.dataset.type,key=group.dataset.key;
+ if(!key) return;
+ group.querySelectorAll('.opt').forEach(opt=>{
+ opt.addEventListener('click',()=>{
+ if(type==='radio'){
+ group.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+ opt.classList.add('sel');answers[key]=opt.dataset.v;
+ } else {
+ opt.classList.toggle('sel');
+ if(!answers[key])answers[key]=[];
+ const v=opt.dataset.v,i=answers[key].indexOf(v);
+ if(i>=0)answers[key].splice(i,1);else answers[key].push(v);
+ }
+ document.getElementById(key)?.classList.remove('has-error');
+ updateProgress();
+ });
+ });
+});
+function save(el){answers[el.dataset.key]=el.value;updateProgress()}
+function updateProgress(){
+ const req=['q_org_type','q_challenges','q_foreign_funding','q_grant_gap','q_golden'];
+ const filled=req.filter(k=>answers[k]&&(Array.isArray(answers[k])?answers[k].length>0:answers[k]!=='')).length;
+ document.getElementById('pf').style.width=Math.round((filled/req.length)*100)+'%';
+}
+function validate(){
+ const req={'q_org_type':'radio','q_challenges':'multi','q_foreign_funding':'radio','q_grant_gap':'radio','q_golden':'text'};
+ let ok=true;
+ Object.entries(req).forEach(([k,type])=>{
+ const card=document.getElementById(k);let filled=false;
+ if(type==='radio')filled=!!answers[k];
+ else if(type==='multi')filled=answers[k]&&answers[k].length>0;
+ else if(type==='text')filled=answers[k]&&answers[k].trim().length>0;
+ if(!filled){card.classList.add('has-error');if(ok){card.scrollIntoView({behavior:'smooth',block:'center'});ok=false;}}
+ else card.classList.remove('has-error');
+ });
+ return ok;
+}
+async function submitForm(){
+ if(!validate())return;
+ const btn=document.getElementById('submitBtn');
+ btn.disabled=true;btn.textContent='Sending...';
+ const payload={
+ '_subject':'[Subinvest Institutional] '+(answers.q_org_name||answers.c_name||'Anonymous'),
+ 'Org_type':answers.q_org_type||'-','Org_name':answers.q_org_name||'-',
+ 'Location':answers.q_country||'-','Startups_per_year':answers.q_startups_yr||'-',
+ 'Common_challenges':(answers.q_challenges||[]).join(', ')||'-',
+ 'Dropout_reason':answers.q_dropout_reason||'-','Open_case':answers.q_open_case||'-',
+ 'Foreign_proportion':answers.q_foreign_prop||'-',
+ 'Foreign_differences':(answers.q_foreign_diff||[]).join(', ')||'-',
+ 'Foreign_funding_access':answers.q_foreign_funding||'-',
+ 'Grant_gap_observed':answers.q_grant_gap||'-',
+ 'Grant_gap_reasons':(answers.q_grant_gap_reason||[]).join(', ')||'-',
+ 'Missing_solution':answers.q_missing_solution||'-',
+ 'Collab_interest':answers.q_collab||'-',
+ 'Golden_answer':answers.q_golden||'-',
+ 'Name':answers.c_name||'-','Role':answers.c_role||'-',
+ 'Email':answers.c_email||'-','LinkedIn':answers.c_linkedin||'-',
+ 'Interview':answers.c_interview||'-','Language':'en',
+ 'Submitted_at':new Date().toLocaleString('en-GB',{timeZone:'Europe/Paris'})
+ };
+ if(answers.c_email)payload['_replyto']=answers.c_email;
+ try{
+ const res=await fetch('https://formspree.io/f/maqzldbg',{method:'POST',body:JSON.stringify(payload),headers:{'Accept':'application/json','Content-Type':'application/json'}});
+ const data=await res.json();
+ if(res.ok){
+ document.getElementById('formMain').style.display='none';
+ document.getElementById('thankyou').style.display='block';
+ window.scrollTo({top:0,behavior:'smooth'});
+ } else {
+      btn.disabled=false;
+      btn.textContent='Error - please retry';
+      console.error('Formspree error:', JSON.stringify(data));
+    }
+ } catch(e){
+      btn.disabled=false;
+      btn.textContent='Connection error - please retry';
+      console.error('Network error:', e);
+    }
+}
+
+function shareLinkedIn(){window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(location.href),'_blank')}
+function shareWhatsApp(){window.open('https://wa.me/?text='+encodeURIComponent(('Subinvest institutional survey: ')+location.href),'_blank')}
+updateProgress();
+</script>
+</body>
+</html>
